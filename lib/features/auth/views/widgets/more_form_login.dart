@@ -69,6 +69,7 @@ class _MoreFormLoginState extends State<MoreFormLogin> {
           ),
 
           CardGlass(
+            onPressed: () {},
             padding: const EdgeInsets.all(15),
             child: Row(
               spacing: 15,
@@ -83,6 +84,7 @@ class _MoreFormLoginState extends State<MoreFormLogin> {
           ),
 
           CardGlass(
+            onPressed: () {},
             padding: const EdgeInsets.all(15),
             child: Row(
               spacing: 15,

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/core/widgets/custom_text_form_field.dart';
+import 'package:game_tv/core/widgets/icon_text_button.dart';
+import 'package:game_tv/core/widgets/tv_text_field.dart';
 
-class RegisterForm extends StatelessWidget {
+class RegisterForm extends StatefulWidget {
   final VoidCallback onSwitch;
   const RegisterForm({super.key, required this.onSwitch});
 
+  @override
+  State<RegisterForm> createState() => _RegisterFormState();
+}
+
+class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -25,65 +31,46 @@ class RegisterForm extends StatelessWidget {
                   ),
                 ),
 
-                CustomTextFormField(
+                TvTextField(
                   label: 'CORREO ELECTRONICO / USUARIO',
                   prefixIcon: const Icon(Icons.email, color: Colors.grey),
                 ),
-
-                CustomTextFormField(
-                  label: 'CONTRASEÑA',
-                  isPassword: true,
-                  prefixIcon: const Icon(Icons.lock_sharp, color: Colors.grey),
-                ),
-
+                // CustomTextFormField(
+                //   label: 'CORREO ELECTRONICO / USUARIO',
+                //   prefixIcon: const Icon(Icons.email, color: Colors.grey),
+                // ),
+                //
+                // CustomTextFormField(
+                //   label: 'CONTRASEÑA',
+                //   isPassword: true,
+                //   prefixIcon: const Icon(Icons.lock_sharp, color: Colors.grey),
+                // ),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      backgroundBuilder: (context, state, child) {
-                        return Ink(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Colors.purple, Colors.deepPurple],
-                            ),
-                          ),
-                          child: child,
-                        );
-                      },
+                  child: IconTextButton(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    backgroundColor: Colors.deepPurple,
+                    focusedColor: Colors.deepPurple.shade200,
+                    text: Text(
+                      'REGISTRAR',
+                      style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () {},
-                    child: const Text(
-                      'ENTRAR',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
+                    icon: Icon(Icons.person, color: Colors.white),
+                    onPressed: widget.onSwitch,
                   ),
                 ),
 
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    '¿Olvidaste tu contraseña?',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                ),
-
-                TextButton(
-                  onPressed: onSwitch,
-                  child: Text(
+                IconTextButton(
+                  text: Text(
                     'YA TIENES CUENTA',
-                    style: TextStyle(
-                      color: Colors.deepPurple.shade400,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18),
                   ),
+                  backgroundColor: Colors.transparent,
+                  focusedColor: Colors.deepPurple.shade200.withValues(
+                    alpha: 0.1,
+                  ),
+                  onPressed: widget.onSwitch,
                 ),
               ],
             ),

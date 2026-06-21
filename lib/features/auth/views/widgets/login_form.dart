@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:game_tv/core/constants/app_routes.dart';
-import 'package:game_tv/core/widgets/custom_text_form_field.dart';
+import 'package:game_tv/core/widgets/icon_text_button.dart';
+import 'package:game_tv/core/widgets/tv_text_field.dart';
 import 'package:game_tv/features/auth/views/widgets/more_form_login.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,65 +38,79 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                 ),
 
-                CustomTextFormField(
+                TvTextField(
                   label: 'CORREO ELECTRONICO / USUARIO',
                   prefixIcon: const Icon(Icons.email, color: Colors.grey),
-                ),
-
-                CustomTextFormField(
-                  label: 'CONTRASEÑA',
-                  isPassword: true,
-                  prefixIcon: const Icon(Icons.lock_sharp, color: Colors.grey),
-                ),
-
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      backgroundBuilder: (context, state, child) {
-                        return Ink(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Colors.purple, Colors.deepPurple],
-                            ),
-                          ),
-                          child: child,
-                        );
-                      },
-                    ),
-                    onPressed: onSubmit,
-                    child: const Text(
-                      'ENTRAR',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
+                  style: TvTextFieldStyle(
+                    focusBackgroundColor: Colors.transparent,
+                    labelFocusColor: Colors.deepPurple.shade200,
+                    hintColor: Colors.grey,
+                    backgroundColor: Colors.transparent,
+                    labelColor: Colors.white,
+                    valueColor: Colors.white,
                   ),
                 ),
 
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
+                TvTextField(
+                  label: 'CONTRASEÑA',
+                  prefixIcon: const Icon(Icons.email, color: Colors.grey),
+                  style: TvTextFieldStyle(
+                    focusBackgroundColor: Colors.transparent,
+                    hintColor: Colors.grey,
+                    labelFocusColor: Colors.deepPurple.shade200,
+                    backgroundColor: Colors.transparent,
+                    labelColor: Colors.white,
+                    valueColor: Colors.white,
+                  ),
+                ),
+
+                // CustomTextFormField(
+                //   label: 'CORREO ELECTRONICO / USUARIO',
+                //   prefixIcon: const Icon(Icons.email, color: Colors.grey),
+                // ),
+
+                // CustomTextFormField(
+                //   label: 'CONTRASEÑA',
+                //   isPassword: true,
+                //   prefixIcon: const Icon(Icons.lock_sharp, color: Colors.grey),
+                // ),
+                SizedBox(
+                  width: double.infinity,
+                  child: IconTextButton(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    backgroundColor: Colors.deepPurple,
+                    focusedColor: Colors.deepPurple.shade200,
+                    text: Text('ENTRAR', style: TextStyle(color: Colors.white)),
+                    icon: Icon(Icons.person, color: Colors.white),
+                    onPressed: onSubmit,
+                  ),
+                ),
+
+                IconTextButton(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  backgroundColor: Colors.transparent,
+                  focusedColor: Colors.deepPurple.shade200.withValues(
+                    alpha: 0.5,
+                  ),
+                  text: Text(
                     '¿Olvidaste tu contraseña?',
                     style: TextStyle(color: Colors.grey, fontSize: 16),
                   ),
+                  onPressed: () {},
                 ),
 
-                TextButton(
-                  onPressed: widget.onSwitch,
-                  child: Text(
+                IconTextButton(
+                  text: Text(
                     'CREAR NUEVA CUENTA',
-                    style: TextStyle(
-                      color: Colors.deepPurple.shade400,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18),
                   ),
+                  backgroundColor: Colors.transparent,
+                  focusedColor: Colors.deepPurple.shade200.withValues(
+                    alpha: 0.1,
+                  ),
+                  onPressed: widget.onSwitch,
                 ),
               ],
             ),

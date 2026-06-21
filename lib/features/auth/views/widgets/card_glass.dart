@@ -1,7 +1,7 @@
 import 'dart:ui';
-import 'package:dpad/dpad.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CardGlass extends StatefulWidget {
   final Widget child;
@@ -17,6 +17,8 @@ class CardGlass extends StatefulWidget {
   final Color? bgColor;
   final bool enableBlur;
   final bool isEntry;
+  final bool autofocus;
+  final double borderRadius;
 
   const CardGlass({
     super.key,
@@ -33,6 +35,8 @@ class CardGlass extends StatefulWidget {
     this.bgColor,
     this.enableBlur = true,
     this.isEntry = false,
+    this.autofocus = false,
+    this.borderRadius = 10,
   });
 
   @override
@@ -54,7 +58,7 @@ class _CardGlassState extends State<CardGlass> {
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
         color: widget.color ?? Colors.transparent,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        borderRadius: BorderRadius.all(Radius.circular(widget.borderRadius)),
         image: widget.bgImage != null
             ? DecorationImage(
                 image: widget.bgImage!,
@@ -100,17 +104,24 @@ class _CardGlassState extends State<CardGlass> {
       return content;
     }
 
-    // Envoltura interactiva usando la librería dpad para control total en TV
-    return DpadFocusable(
-      entry: widget.isEntry,
-      onSelect: widget.onPressed,
+    return Focus(
+      autofocus: widget.autofocus,
       onFocusChange: (hasFocus) {
         setState(() {
           _isFocused = hasFocus;
         });
       },
-      effects: const [], // Desactivar efectos de la librería para usar los de CardGlass
-      child: content,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent &&
+            (event.logicalKey == LogicalKeyboardKey.select ||
+                event.logicalKey == LogicalKeyboardKey.enter ||
+                event.logicalKey == LogicalKeyboardKey.gameButtonA)) {
+          widget.onPressed?.call();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: GestureDetector(onTap: widget.onPressed, child: content),
     );
   }
 }
