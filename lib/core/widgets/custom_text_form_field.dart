@@ -43,6 +43,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     return Column(
