@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:game_tv/core/constants/menu_items.dart';
 import 'package:game_tv/core/providers/navigation/navigation_state.dart';
 
 class NavigationNotifier extends Notifier<NavigationState> {
@@ -77,7 +78,10 @@ class NavigationNotifier extends Notifier<NavigationState> {
     }
 
     if (newCol >= 0 && validRow == 0) {
-      newHeroIndex = newCol.clamp(0, 2); // Asumiendo máximo 3 slides en hero
+      newHeroIndex = newCol.clamp(
+        0,
+        maxCol,
+      ); // Asumiendo máximo 3 slides en hero
     }
 
     state = state.copyWith(
@@ -134,6 +138,34 @@ class NavigationNotifier extends Notifier<NavigationState> {
   void syncActiveRoute() {
     if (state.col == -1) {
       state = state.copyWith(activeRouteIndex: state.navIndex);
+    }
+  }
+
+  void resetPosition() {
+    state = state.copyWith(row: 0, col: 0);
+  }
+
+  void syncWithRoute(String route) {
+    final index = globalNavItems.indexWhere((item) => item.route == route);
+
+    if (index != -1 && state.activeRouteIndex != index) {
+      state = state.copyWith(
+        navIndex: index,
+        activeRouteIndex: index,
+        row: 0,
+        col: 0,
+      );
+
+      // Protocolo de restauración física de scroll vertical
+      _scrollToRow(0);
+
+      // Limpieza de memoria de navegación horizontal
+      _savedCol.clear();
+      for (final controller in rowScrolls) {
+        if (controller.hasClients) {
+          controller.jumpTo(0);
+        }
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:game_tv/core/constants/app_routes.dart';
 import 'package:game_tv/features/auth/views/auth_screen.dart';
-import 'package:game_tv/features/game_content/views/game_content_screen.dart';
+import 'package:game_tv/features/game_details/views/game_details_screen.dart';
 import 'package:game_tv/features/home/views/home_screen.dart';
 import 'package:game_tv/features/upcoming_releases/views/upcoming_releases_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -47,11 +47,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const UpcomingReleasesScreen(),
       ),
       GoRoute(
-        path: "${AppRoutes.gameContent}/:id",
+        path: "${AppRoutes.gameDetails}/:id",
         builder: (context, state) {
           final String? id = state.pathParameters['id'];
 
-          return GameContentScreen(id: id);
+          return GameDetailsScreen(id: id);
         },
       ),
       // GoRoute(
