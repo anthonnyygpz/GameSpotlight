@@ -1,28 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:game_tv/core/constants/trailer_game.dart';
 import 'package:game_tv/core/providers/navigation/navigation_notifier.dart';
 import 'package:game_tv/core/widgets/base_scaffold.dart';
 import 'package:game_tv/core/widgets/content_row.dart';
-import 'package:game_tv/features/home/models/game_item.dart';
-
-const _upcoming = [
-  GameItem(
-    id: 24,
-    title: 'CYBERLINE\n2077',
-    subtitle: '',
-    gradientStart: Color(0xFF0A1A3A),
-    gradientEnd: Color(0xFF1A0A4A),
-    date: '07 JUN 2024',
-  ),
-  GameItem(
-    id: 25,
-    title: 'LAST OASIS\nONLINE',
-    subtitle: '',
-    gradientStart: Color(0xFF0A3A1A),
-    gradientEnd: Color(0xFF1A2A0A),
-    date: '02 AGO 2024',
-  ),
-];
 
 class UpcomingReleasesScreen extends ConsumerWidget {
   const UpcomingReleasesScreen({super.key});
@@ -33,7 +14,7 @@ class UpcomingReleasesScreen extends ConsumerWidget {
     final controller = ref.read(navigationProvider.notifier);
 
     return BaseScaffold(
-      rowItemCounts: [_upcoming.length],
+      rowItemCounts: [globalTrailerGames.length],
       child: CustomScrollView(
         controller: controller.mainScroll,
         physics: const NeverScrollableScrollPhysics(),
@@ -41,7 +22,7 @@ class UpcomingReleasesScreen extends ConsumerWidget {
           SliverToBoxAdapter(
             child: ContentRow(
               title: 'PRÓXIMOS LANZAMIENTOS',
-              items: _upcoming,
+              items: globalTrailerGames,
               cardWidth: 360,
               cardHeight: 320,
               focusedCol: state.row == 0 ? state.col : -1,

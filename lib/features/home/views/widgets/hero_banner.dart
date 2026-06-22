@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/core/theme/app_colors.dart';
 import 'package:game_tv/core/widgets/static_button.dart';
 import 'package:game_tv/features/home/models/game_item.dart';
 
@@ -18,6 +17,7 @@ class HeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final slide = heroSlides[currentIndex];
+    final colorScheme = Theme.of(context).colorScheme;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -25,7 +25,7 @@ class HeroBanner extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: isFocused
-            ? Border.all(color: AppColors.focusBorder, width: 2.5)
+            ? Border.all(color: colorScheme.outline, width: 2.5)
             : Border.all(color: Colors.transparent, width: 2.5),
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
@@ -45,7 +45,7 @@ class HeroBanner extends StatelessWidget {
                 height: 320,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.accent.withValues(alpha: 0.08),
+                  color: colorScheme.primary.withValues(alpha: 0.08),
                 ),
               ),
             ),
@@ -62,13 +62,12 @@ class HeroBanner extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.accent,
+                        color: colorScheme.primary,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         slide.badge!,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
@@ -78,8 +77,7 @@ class HeroBanner extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     slide.title,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
+                    style: TextStyle(
                       fontSize: 46,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -89,8 +87,8 @@ class HeroBanner extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     slide.subtitle,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
+                    style: TextStyle(
+                      color: colorScheme.onSecondary,
                       fontSize: 14,
                       letterSpacing: 1,
                     ),
@@ -121,16 +119,16 @@ class HeroBanner extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.surface.withValues(alpha: 0.9),
+                    color: colorScheme.surface.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.accent, width: 1.5),
+                    border: Border.all(color: colorScheme.primary, width: 1.5),
                   ),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'LANZAMIENTO',
                         style: TextStyle(
-                          color: AppColors.textMuted,
+                          color: colorScheme.onTertiary,
                           fontSize: 8,
                           letterSpacing: 1.5,
                           fontWeight: FontWeight.w600,
@@ -139,15 +137,14 @@ class HeroBanner extends StatelessWidget {
                       Text(
                         slide.date!.split(' ')[0],
                         style: const TextStyle(
-                          color: AppColors.textPrimary,
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                       Text(
                         slide.date!.substring(3),
-                        style: const TextStyle(
-                          color: AppColors.accentBright,
+                        style: TextStyle(
+                          color: colorScheme.secondary,
                           fontSize: 10,
                           letterSpacing: 1,
                           fontWeight: FontWeight.w600,
@@ -170,8 +167,8 @@ class HeroBanner extends StatelessWidget {
                     height: 8,
                     decoration: BoxDecoration(
                       color: i == currentIndex
-                          ? AppColors.accent
-                          : AppColors.textMuted,
+                          ? colorScheme.primary
+                          : colorScheme.onTertiary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
@@ -182,23 +179,23 @@ class HeroBanner extends StatelessWidget {
               Positioned(
                 bottom: 16,
                 right: 20,
-                child: const Row(
+                child: Row(
                   children: [
                     Icon(
                       Icons.chevron_left,
-                      color: AppColors.textMuted,
+                      color: colorScheme.onTertiary,
                       size: 14,
                     ),
                     Text(
                       '  navegar  ',
                       style: TextStyle(
-                        color: AppColors.textMuted,
+                        color: colorScheme.onTertiary,
                         fontSize: 10,
                       ),
                     ),
                     Icon(
                       Icons.chevron_right,
-                      color: AppColors.textMuted,
+                      color: colorScheme.onTertiary,
                       size: 14,
                     ),
                   ],
