@@ -1,0 +1,3 @@
+class GameGenresEntity {
+  const GameGenresEntity();
+}
