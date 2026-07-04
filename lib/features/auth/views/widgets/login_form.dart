@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:game_tv/core/domain/auth/entity/login_entity.dart';
+import 'package:game_tv/core/domain/auth/usecases/auth/login_usecase.dart';
 import 'package:game_tv/core/providers/auth/auth_provider.dart';
 import 'package:game_tv/core/utils/validators.dart';
 import 'package:game_tv/core/widgets/tv_button.dart';
@@ -179,7 +179,7 @@ class _FormContentState extends ConsumerState<_FormContent> {
   void _validateAndSubmit() {
     if (!_formKey.currentState!.validate()) return;
 
-    final entity = LoginEntity(
+    final entity = LoginParams(
       identifier: _identifierController.text,
       password: _passwordController.text,
     );

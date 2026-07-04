@@ -1,38 +1,56 @@
 import 'package:dio/dio.dart';
 import 'package:game_tv/core/data/auth/model/auth_response_model.dart';
+import 'package:game_tv/core/data/auth/model/login_request_model.dart';
+import 'package:game_tv/core/data/auth/model/register_request_model.dart';
 import 'package:game_tv/core/domain/auth/entity/auth_response_entity.dart';
-import 'package:game_tv/core/domain/auth/entity/login_entity.dart';
-import 'package:game_tv/core/domain/auth/entity/register_entity.dart';
 import 'package:game_tv/core/domain/auth/repository/auth_repository.dart';
+import 'package:game_tv/core/domain/auth/usecases/auth/login_usecase.dart';
+import 'package:game_tv/core/domain/auth/usecases/auth/register_usecase.dart';
+import 'package:game_tv/core/errors/exceptions.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._dio);
   final Dio _dio;
 
   @override
-  Future<AuthResponseEntity> login(LoginEntity entity) async {
-    final response = await _dio.post(
-      '/auth/login',
-      data: {'identifier': entity.identifier, 'password': entity.password},
-    );
+  Future<AuthResponseEntity> login(LoginParams params) async {
+    try {
+      final request = LoginRequestModel(
+        identifier: params.identifier,
+        password: params.password,
+      );
 
-    final z = AuthResponseModel.fromJson(response.data);
-    return z;
+      final response = await _dio.post('/auth/login', data: request.toJson());
+
+      return AuthResponseModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw DioException(requestOptions: e.requestOptions);
+    } on FormatException {
+      throw ServerException('Respuesta inesperada del servidor');
+    }
   }
 
   @override
-  Future<AuthResponseEntity> register(RegisterEntity entity) async {
-    final response = await _dio.post(
-      '/auth/register',
-      data: {
-        'email': entity.email,
-        'password': entity.password,
-        'name': entity.name,
-        'country': entity.country,
-      },
-    );
+  Future<AuthResponseEntity> register(RegisterParams params) async {
+    try {
+      final request = RegisterRequestModel(
+        email: params.email,
+        password: params.password,
+        name: params.name,
+        country: params.country,
+      );
 
-    return AuthResponseModel.fromJson(response.data as Map<String, dynamic>);
+      final response = await _dio.post(
+        '/auth/register',
+        data: request.toJson(),
+      );
+
+      return AuthResponseModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw DioException(requestOptions: e.requestOptions);
+    } on FormatException {
+      throw ServerException('Respuesta inesperada del servidor');
+    }
   }
 
   // @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:game_tv/core/domain/auth/entity/register_entity.dart';
+import 'package:game_tv/core/domain/auth/usecases/auth/register_usecase.dart';
 import 'package:game_tv/core/providers/auth/auth_provider.dart';
 import 'package:game_tv/core/utils/validators.dart';
 import 'package:game_tv/core/widgets/tv_button.dart';
@@ -85,11 +85,11 @@ class _FormContentState extends ConsumerState<_FormContent> {
           spacing: _FormContent._kSpacing,
           children: [
             _buildTitle(),
-            _buildNameField(),
-            _buildEmailField(),
-            _buildPasswordField(),
-            _buildSubmitButton(),
-            _buildLoginButton(),
+            _buildNameField(isLoading),
+            _buildEmailField(isLoading),
+            _buildPasswordField(isLoading),
+            _buildSubmitButton(isLoading),
+            _buildLoginButton(isLoading),
           ],
         ),
       ),
@@ -107,8 +107,9 @@ class _FormContentState extends ConsumerState<_FormContent> {
     );
   }
 
-  Widget _buildNameField() {
+  Widget _buildNameField(bool isLoading) {
     return TvTextField(
+      isLoading: isLoading,
       controller: _nameController,
       label: 'NOMBRE / USUARIO',
       prefixIcon: const Icon(Icons.person, color: Colors.grey),
@@ -121,8 +122,9 @@ class _FormContentState extends ConsumerState<_FormContent> {
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(bool isLoading) {
     return TvTextField(
+      isLoading: isLoading,
       controller: _emailController,
       label: 'CORREO ELECTRÓNICO',
       prefixIcon: const Icon(Icons.email, color: Colors.grey),
@@ -135,8 +137,9 @@ class _FormContentState extends ConsumerState<_FormContent> {
     );
   }
 
-  Widget _buildPasswordField() {
+  Widget _buildPasswordField(bool isLoading) {
     return TvTextField(
+      isLoading: isLoading,
       controller: _passwordController,
       label: 'CONTRASEÑA',
       prefixIcon: const Icon(Icons.lock_sharp, color: Colors.grey),
@@ -153,10 +156,11 @@ class _FormContentState extends ConsumerState<_FormContent> {
     );
   }
 
-  Widget _buildSubmitButton() {
+  Widget _buildSubmitButton(bool isLoading) {
     return SizedBox(
       width: double.infinity,
       child: TvButton(
+        isLoading: isLoading,
         label: 'REGISTRAR',
         icon: Icons.person,
         onPressed: _validateAndSubmit,
@@ -164,8 +168,9 @@ class _FormContentState extends ConsumerState<_FormContent> {
     );
   }
 
-  Widget _buildLoginButton() {
+  Widget _buildLoginButton(bool isLoading) {
     return TvButton.ghost(
+      isLoading: isLoading,
       label: 'YA TIENES CUENTA',
       onPressed: widget.onSwitch,
     );
@@ -174,7 +179,7 @@ class _FormContentState extends ConsumerState<_FormContent> {
   void _validateAndSubmit() {
     if (!_formKey.currentState!.validate()) return;
 
-    final entity = RegisterEntity(
+    final entity = RegisterParams(
       email: _emailController.text,
       password: _passwordController.text,
       name: _nameController.text,
