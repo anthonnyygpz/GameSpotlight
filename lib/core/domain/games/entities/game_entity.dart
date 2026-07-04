@@ -1,31 +1,35 @@
 class GameEntity {
-  final String idJuego;
-  final String titulo;
-  final String slug;
-  final String? sinopsis;
-  final String? fechaLanzamiento;
-  final String? desarrollador;
-  final String? editor;
-  final String? imagenPortada;
-  final String? bannerUrl;
-  final String? estado;
-  final String? destacado;
-  final String? createdAt;
-  final String? updatedAt;
-
   const GameEntity({
-    required this.idJuego,
-    required this.titulo,
-    required this.slug,
-    required this.sinopsis,
-    required this.fechaLanzamiento,
-    required this.desarrollador,
-    required this.editor,
-    required this.imagenPortada,
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.gradientStart,
+    required this.gradiendEnd,
+    required this.badge,
+    required this.date,
+    required this.category,
+    required this.coverImageUrl,
     required this.bannerUrl,
-    required this.estado,
-    required this.destacado,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.genres,
+    required this.platforms,
+    required this.totalTrailers,
+    required this.featured,
+    required this.status,
   });
+
+  final String id;
+  final String title;
+  final String subtitle;
+  final String gradientStart;
+  final String gradiendEnd;
+  final String? badge;
+  final DateTime? date;
+  final String category;
+  final String coverImageUrl;
+  final String bannerUrl;
+  final String genres;
+  final String platforms;
+  final String totalTrailers;
+  final String featured;
+  final String status;
 }

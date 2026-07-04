@@ -1,30 +1,24 @@
-import 'package:game_tv/core/data/games/datasources/games_remote_datasource.dart';
-import 'package:game_tv/core/data/games/models/game_model.dart';
-import 'package:game_tv/core/domain/games/entities/game_entity.dart';
+import 'package:dio/dio.dart';
+import 'package:game_tv/core/data/games/models/game_details_entity.dart';
+import 'package:game_tv/core/data/games/models/game_response_model.dart';
+import 'package:game_tv/core/domain/games/entities/game_detail_entity.dart';
+import 'package:game_tv/core/domain/games/entities/game_response_entity.dart';
 import 'package:game_tv/core/domain/games/repositories/games_repository.dart';
 
 class GamesRepositoryImpl implements GamesRepository {
-  final GamesRemoteDataSource remoteDataSource;
+  final Dio _dio;
 
-  GamesRepositoryImpl(this.remoteDataSource);
+  GamesRepositoryImpl(this._dio);
 
   @override
-  Future<List<GameEntity>> getGames() async {
-    try {
-      final rawData = await remoteDataSource.fetchGames();
-      return rawData.map((json) => GameModel.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Falla en la interceptación de datos: $e');
-    }
+  Future<GameResponseEntity> getGames() async {
+    final response = await _dio.get('games/home');
+    return GameResponseModel.fromJson(response.data);
   }
 
   @override
-  Future<GameEntity> getGameById(String id) async {
-    try {
-      final rawData = await remoteDataSource.fetchGameById(id);
-      return GameModel.fromJson(rawData);
-    } catch (e) {
-      throw Exception('No se pudo localizar el archivo del juego: $e');
-    }
+  Future<GameDetailEntity> getGameById(String id) async {
+    final response = await _dio.get('games/$id');
+    return GameDetailModel.fromJson(response.data);
   }
 }
