@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:game_tv/core/domain/games/entities/game_entity.dart';
 import 'package:game_tv/core/network/memory_cache_manager.dart';
-import 'package:game_tv/features/home/models/unified_game.dart';
 
 class GameCard extends StatelessWidget {
   const GameCard({
@@ -15,7 +15,7 @@ class GameCard extends StatelessWidget {
     required this.showBadgeTop,
   });
 
-  final UnifiedGame item;
+  final GameEntity item;
   final double width;
   final double height;
   final bool isFocused;
@@ -80,7 +80,7 @@ class GameCard extends StatelessWidget {
               //     ),
               //   ),
               // ),
-              if (showDate && item.fechaLanzamiento != null)
+              if (showDate && item.date != null)
                 Positioned(
                   top: 10,
                   left: 10,
@@ -97,7 +97,7 @@ class GameCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      item.fechaLanzamiento ?? '',
+                      item.date.toString(),
                       style: TextStyle(
                         color: cs.secondary,
                         fontSize: 9,
@@ -138,18 +138,18 @@ class GameCard extends StatelessWidget {
                                 height: 1.1,
                               ),
                             ),
-                            if (item.editor != null) ...[
-                              const SizedBox(height: 2),
-                              Text(
-                                item.editor ?? '',
-                                style: TextStyle(
-                                  color: cs.onSecondary,
-                                  fontSize: 9,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                            // if (item.editor != null) ...[
+                            //   const SizedBox(height: 2),
+                            //   Text(
+                            //     item.editor ?? '',
+                            //     style: TextStyle(
+                            //       color: cs.onSecondary,
+                            //       fontSize: 9,
+                            //       letterSpacing: 1,
+                            //       fontWeight: FontWeight.w500,
+                            //     ),
+                            //   ),
+                            // ],
                           ],
                         ),
                       ),
@@ -201,7 +201,7 @@ class GameCard extends StatelessWidget {
   Widget _buildImage(ColorScheme cs) {
     return Positioned.fill(
       child: CachedNetworkImage(
-        imageUrl: item.imagenPortada ?? '',
+        imageUrl: item.coverImageUrl,
         cacheManager: MemoryCacheManager(),
         fit: BoxFit.cover,
         placeholder: (context, url) =>
@@ -215,7 +215,7 @@ class GameCard extends StatelessWidget {
   }
 
   Widget _shimmerOverlay(ColorScheme cs) {
-    if (item.bannerUrl == null) return const SizedBox.shrink();
+    // if (item.bannerUrl == null) return const SizedBox.shrink();
 
     return Positioned.fill(
       child: DecoratedBox(

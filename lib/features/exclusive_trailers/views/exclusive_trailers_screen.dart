@@ -27,96 +27,97 @@ class _ExclusiveTrailersScreenState
 
   @override
   Widget build(BuildContext context) {
-    final aggregatorAsync = ref.watch(homeAggregatorProvider);
+    // final aggregatorAsync = ref.watch(homeAggregatorProvider);
     final state = ref.watch(navigationProvider);
     final controller = ref.read(navigationProvider.notifier);
+    return Scaffold(body: const Center(child: CircularProgressIndicator()));
 
-    return AsyncUIBuilder(
-      asyncValue: aggregatorAsync,
-      builder: (data) {
-        return Text('hola');
-        // Filtramos SOLO la categoría de Tráileres Exclusivos (ID 4)
-        // final exclusiveEntry = data.categorizedGames.entries
-        //     .where((entry) => entry.key.idTrailer == '4')
-        //     .toList();
-        //
-        // final exclusiveGames = exclusiveEntry.isNotEmpty
-        //     ? exclusiveEntry.first.value
-        //     : [];
+    // return AsyncUIBuilder(
+    //   asyncValue: aggregatorAsync,
+    //   builder: (data) {
+    //     return Text('hola');
+    // Filtramos SOLO la categoría de Tráileres Exclusivos (ID 4)
+    // final exclusiveEntry = data.categorizedGames.entries
+    //     .where((entry) => entry.key.idTrailer == '4')
+    //     .toList();
+    //
+    // final exclusiveGames = exclusiveEntry.isNotEmpty
+    //     ? exclusiveEntry.first.value
+    //     : [];
 
-        controller.attachControllers(
-          _mainScroll,
-          _rowScrolls,
-          hasHero: false,
-          rowHeight: 360.0,
-        );
-
-        // return BaseScaffold(
-        //   rowItemCounts: [exclusiveGames.length],
-        //   onContentSelect: (row, col) {
-        //     final selected = exclusiveGames[col];
-        //     context.push('${AppRoutes.gameDetails}/${selected.idJuego}');
-        //   },
-        //   child: CustomScrollView(
-        //     controller: _mainScroll,
-        //     physics: const NeverScrollableScrollPhysics(),
-        //     slivers: [
-        //       SliverToBoxAdapter(
-        //         child: Padding(
-        //           padding: const EdgeInsets.only(top: 28.0),
-        //           child: Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             children: [
-        //               const Padding(
-        //                 padding: EdgeInsets.symmetric(horizontal: 20.0),
-        //                 child: Text(
-        //                   'TRÁILERES EXCLUSIVOS',
-        //                   style: TextStyle(
-        //                     color: Colors.white70,
-        //                     fontSize: 18,
-        //                     fontWeight: FontWeight.bold,
-        //                     letterSpacing: 2.0,
-        //                   ),
-        //                 ),
-        //               ),
-        //               const SizedBox(height: 14),
-        //               SizedBox(
-        //                 height: 280,
-        //                 child: ListView.builder(
-        //                   controller: _rowScrolls[0],
-        //                   scrollDirection: Axis.horizontal,
-        //                   physics: const NeverScrollableScrollPhysics(),
-        //                   clipBehavior: Clip.none,
-        //                   padding: const EdgeInsets.only(
-        //                     left: 20.0,
-        //                     right: 64.0,
-        //                   ),
-        //                   itemExtent: AppConstants.cardScrollExtent,
-        //                   itemCount: exclusiveGames.length,
-        //                   itemBuilder: (context, colIndex) {
-        //                     final game = exclusiveGames[colIndex];
-        //                     final isFocused =
-        //                         state.row == 0 && state.col == colIndex;
-        //
-        //                     return Padding(
-        //                       padding: const EdgeInsets.only(right: 12.0),
-        //                       child: TvGameCard(
-        //                         game: game,
-        //                         isFocused: isFocused,
-        //                       ), // Widget restaurado
-        //                     );
-        //                   },
-        //                 ),
-        //               ),
-        //             ],
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // );
-      },
+    controller.attachControllers(
+      _mainScroll,
+      _rowScrolls,
+      hasHero: false,
+      rowHeight: 360.0,
     );
+
+    // return BaseScaffold(
+    //   rowItemCounts: [exclusiveGames.length],
+    //   onContentSelect: (row, col) {
+    //     final selected = exclusiveGames[col];
+    //     context.push('${AppRoutes.gameDetails}/${selected.idJuego}');
+    //   },
+    //   child: CustomScrollView(
+    //     controller: _mainScroll,
+    //     physics: const NeverScrollableScrollPhysics(),
+    //     slivers: [
+    //       SliverToBoxAdapter(
+    //         child: Padding(
+    //           padding: const EdgeInsets.only(top: 28.0),
+    //           child: Column(
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: [
+    //               const Padding(
+    //                 padding: EdgeInsets.symmetric(horizontal: 20.0),
+    //                 child: Text(
+    //                   'TRÁILERES EXCLUSIVOS',
+    //                   style: TextStyle(
+    //                     color: Colors.white70,
+    //                     fontSize: 18,
+    //                     fontWeight: FontWeight.bold,
+    //                     letterSpacing: 2.0,
+    //                   ),
+    //                 ),
+    //               ),
+    //               const SizedBox(height: 14),
+    //               SizedBox(
+    //                 height: 280,
+    //                 child: ListView.builder(
+    //                   controller: _rowScrolls[0],
+    //                   scrollDirection: Axis.horizontal,
+    //                   physics: const NeverScrollableScrollPhysics(),
+    //                   clipBehavior: Clip.none,
+    //                   padding: const EdgeInsets.only(
+    //                     left: 20.0,
+    //                     right: 64.0,
+    //                   ),
+    //                   itemExtent: AppConstants.cardScrollExtent,
+    //                   itemCount: exclusiveGames.length,
+    //                   itemBuilder: (context, colIndex) {
+    //                     final game = exclusiveGames[colIndex];
+    //                     final isFocused =
+    //                         state.row == 0 && state.col == colIndex;
+    //
+    //                     return Padding(
+    //                       padding: const EdgeInsets.only(right: 12.0),
+    //                       child: TvGameCard(
+    //                         game: game,
+    //                         isFocused: isFocused,
+    //                       ), // Widget restaurado
+    //                     );
+    //                   },
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
+    //   },
+    // );
   }
 }
 
@@ -153,7 +154,8 @@ class TvGameCard extends StatelessWidget {
           children: [
             Positioned.fill(
               child: Image.network(
-                game.imagenPortada ?? '',
+                // game.imagenPortada ??
+                '',
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => Container(color: Colors.grey[900]),
               ),
@@ -184,7 +186,8 @@ class TvGameCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  game.fechaLanzamiento ?? 'TBA',
+                  // game.fechaLanzamiento ??
+                  'TBA',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 11,
@@ -206,7 +209,8 @@ class TvGameCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          game.titulo.toUpperCase(),
+                          // game.titulo.toUpperCase(),
+                          '',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(

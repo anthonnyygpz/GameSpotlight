@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:game_tv/core/domain/games/entities/game_entity.dart';
 import 'package:game_tv/core/widgets/static_button.dart';
-import 'package:game_tv/features/home/models/unified_game.dart';
 
 class HeroBanner extends StatelessWidget {
   const HeroBanner({
@@ -12,13 +12,13 @@ class HeroBanner extends StatelessWidget {
 
   final int currentIndex;
   final bool isFocused;
-  final List<UnifiedGame> heroSlides;
+  final List<GameEntity> heroSlides;
 
   static const _bannerHeight = 310.0;
   static const _borderRadius = 16.0;
   static const _padding = 36.0;
 
-  UnifiedGame get _currentSlide => heroSlides[currentIndex];
+  GameEntity get _currentSlide => heroSlides[currentIndex];
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class HeroBanner extends StatelessWidget {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(_borderRadius),
       image: DecorationImage(
-        image: NetworkImage(_currentSlide.bannerUrl ?? ''),
+        image: NetworkImage(_currentSlide.bannerUrl),
         fit: BoxFit.cover,
       ),
       border: Border.all(color: borderColor, width: 2.5),
@@ -85,7 +85,7 @@ class _BackgroundGlow extends StatelessWidget {
 class _BannerContent extends StatelessWidget {
   const _BannerContent({required this.slide, required this.cs});
 
-  final UnifiedGame slide;
+  final GameEntity slide;
   final ColorScheme cs;
 
   @override
@@ -134,12 +134,12 @@ class _BannerContent extends StatelessWidget {
 class _LaunchDataBadge extends StatelessWidget {
   const _LaunchDataBadge({required this.slide, required this.cs});
 
-  final UnifiedGame slide;
+  final GameEntity slide;
   final ColorScheme cs;
 
   @override
   Widget build(BuildContext context) {
-    final releaseDay = slide.fechaLanzamiento ?? '';
+    final releaseDay = slide.date ?? '';
 
     return Positioned(
       top: 20,
@@ -155,7 +155,7 @@ class _LaunchDataBadge extends StatelessWidget {
           children: [
             const Text('LANZAMIENTO'),
             Text(
-              releaseDay,
+              releaseDay.toString(),
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
             ),
           ],

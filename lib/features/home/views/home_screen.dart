@@ -1,13 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:game_tv/core/domain/games/entities/game_entity.dart';
+import 'package:game_tv/core/domain/games/entities/game_response_entity.dart';
 import 'package:game_tv/core/models/row_data.dart';
+import 'package:game_tv/core/providers/games/games_provider.dart';
 import 'package:game_tv/core/providers/navigation/navigation_notifier.dart';
 import 'package:game_tv/core/widgets/async_ui_builder.dart';
 import 'package:game_tv/core/widgets/game_content_screen.dart';
 import 'package:game_tv/core/widgets/loading_expressive.dart';
-import 'package:game_tv/features/home/models/unified_game.dart';
-import 'package:game_tv/features/home/providers/home_aggregator_provider.dart';
 import 'package:game_tv/features/home/views/widgets/hero_banner.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -15,12 +16,14 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final aggregatorAsync = ref.watch(homeAggregatorProvider);
+    final gamesAsyncValue = ref.watch(gamesProvider);
 
     return AsyncUIBuilder(
-      asyncValue: aggregatorAsync,
+      asyncValue: gamesAsyncValue,
       builder: (games) {
-        if (games.isEmpty) const LoadingExpressive();
+        if (games == null) {
+          return const Scaffold(body: LoadingExpressive());
+        }
 
         return _HomeContent(games: games);
       },
@@ -29,16 +32,20 @@ class HomeScreen extends ConsumerWidget {
 }
 
 class _HomeContent extends ConsumerWidget {
-  final List<UnifiedGame> games;
-
   const _HomeContent({required this.games});
+
+  final DataGame games;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navigationState = ref.watch(navigationProvider);
-    final upcomingGames = ref.watch(upcomingGamesProvider);
 
-    final rowsConfig = _buildRowsConfig(games, upcomingGames);
+    final rowsConfig = _buildRowsConfig(
+      games.hero,
+      games.trailers,
+      games.upcoming,
+      games.topRated,
+    );
     final heroGames = rowsConfig[0].items;
     final safeHeroIndex = _computeSafeHeroIndex(
       heroGames: heroGames,
@@ -46,7 +53,7 @@ class _HomeContent extends ConsumerWidget {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _precacheHeroImages(context, heroGames);
+      _precacheHeroImages(context, games.hero);
     });
 
     return GameContentScreen(
@@ -61,27 +68,28 @@ class _HomeContent extends ConsumerWidget {
   }
 
   List<RowData> _buildRowsConfig(
-    List<UnifiedGame> games,
-    List<UnifiedGame> upcomingGames,
+    List<GameEntity> games,
+    List<GameEntity> trailers,
+    List<GameEntity> upcoming,
+    List<GameEntity> topRated,
   ) => [
     RowData(title: 'HERO', items: games.take(5).toList()),
-    RowData(title: 'PROXIMOS LANZAMIENTOS', items: upcomingGames),
-    RowData(title: 'TODAS LAS TRANSMISIONES', items: games),
+    RowData(title: 'TRAILERS', items: trailers),
+    RowData(title: 'PROXIMOS LANZAMIENTOS', items: upcoming),
+    RowData(title: 'MEJOR VALORADOS', items: topRated),
   ];
 
   int _computeSafeHeroIndex({
-    required List<UnifiedGame> heroGames,
+    required List<GameEntity> heroGames,
     required int rawIndex,
   }) {
     if (heroGames.isEmpty) return 0;
     return rawIndex.clamp(0, heroGames.length - 1);
   }
 
-  void _precacheHeroImages(BuildContext context, List<UnifiedGame> heroGames) {
+  void _precacheHeroImages(BuildContext context, List<GameEntity> heroGames) {
     for (final game in heroGames) {
-      if (game.bannerUrl != null) {
-        precacheImage(CachedNetworkImageProvider(game.bannerUrl!), context);
-      }
+      precacheImage(CachedNetworkImageProvider(game.bannerUrl), context);
     }
   }
 }

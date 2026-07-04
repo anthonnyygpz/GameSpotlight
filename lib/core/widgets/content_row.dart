@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:game_tv/core/domain/games/entities/game_entity.dart';
 import 'package:game_tv/core/widgets/game_card.dart';
-import 'package:game_tv/features/home/models/unified_game.dart';
 
 class ContentRow extends StatelessWidget {
   const ContentRow({
@@ -18,7 +18,7 @@ class ContentRow extends StatelessWidget {
   });
 
   final String title;
-  final List<UnifiedGame> items;
+  final List<GameEntity> items;
   final double cardWidth;
   final double cardHeight;
   final bool showPlayButton;

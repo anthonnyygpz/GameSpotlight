@@ -1,8 +1,8 @@
-import 'package:game_tv/features/home/models/unified_game.dart';
+import 'package:game_tv/core/domain/games/entities/game_entity.dart';
 
 class RowData {
   final String title;
-  final List<UnifiedGame> items;
+  final List<GameEntity> items;
   final String? targetRoute;
   final bool showDate;
   final bool showBadgeTop;

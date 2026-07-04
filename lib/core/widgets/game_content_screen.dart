@@ -31,16 +31,17 @@ class GameContentScreen extends ConsumerStatefulWidget {
 
 class _GameContentScreenState extends ConsumerState<GameContentScreen> {
   late final ScrollController _mainScroll;
-  late final List<ScrollController> _rowScrolls;
+  late List<ScrollController> _rowScrolls;
+
+  List<RowData> _validRows = [];
+  int _validHeaderIndex = -1;
 
   @override
   void initState() {
     super.initState();
     _mainScroll = ScrollController();
-    _rowScrolls = List.generate(
-      widget.rowsConfig.length,
-      (_) => ScrollController(),
-    );
+    _updateValidRows();
+    _initScrolls();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
@@ -49,18 +50,39 @@ class _GameContentScreenState extends ConsumerState<GameContentScreen> {
     });
   }
 
+  void _updateValidRows() {
+    _validRows = [];
+    _validHeaderIndex = -1;
+
+    for (int i = 0; i < widget.rowsConfig.length; i++) {
+      final config = widget.rowsConfig[i];
+      final isHeader = i == widget.headerSliverRowIndex;
+
+      if (config.items.isNotEmpty || isHeader) {
+        if (isHeader) {
+          _validHeaderIndex = _validRows.length;
+        }
+        _validRows.add(config);
+      }
+    }
+  }
+
+  void _initScrolls() {
+    _rowScrolls = List.generate(_validRows.length, (_) => ScrollController());
+  }
+
   @override
   void didUpdateWidget(covariant GameContentScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.rowsConfig.length != widget.rowsConfig.length) {
+    final oldLength = _validRows.length;
+
+    _updateValidRows();
+
+    if (oldLength != _validRows.length) {
       for (final c in _rowScrolls) {
         c.dispose();
       }
-      _rowScrolls
-        ..clear()
-        ..addAll(
-          List.generate(widget.rowsConfig.length, (_) => ScrollController()),
-        );
+      _initScrolls();
       ref
           .read(navigationProvider.notifier)
           .attachControllers(_mainScroll, _rowScrolls);
@@ -82,7 +104,8 @@ class _GameContentScreenState extends ConsumerState<GameContentScreen> {
     final notifier = ref.read(navigationProvider.notifier);
 
     return BaseScaffold(
-      rowItemCounts: widget.rowsConfig.map((r) => r.totalCount).toList(),
+      // Pasamos estrictamente las filas válidas
+      rowItemCounts: _validRows.map((r) => r.totalCount).toList(),
       onContentSelect: (row, col) => _handleSelect(row, col, notifier),
       child: CustomScrollView(
         controller: _mainScroll,
@@ -96,7 +119,7 @@ class _GameContentScreenState extends ConsumerState<GameContentScreen> {
   }
 
   void _handleSelect(int row, int col, NavigationNotifier notifier) {
-    final config = widget.rowsConfig[row];
+    final config = _validRows[row];
 
     if (config.hasTrailingAction && col == config.items.length) {
       notifier.resetPosition();
@@ -109,12 +132,11 @@ class _GameContentScreenState extends ConsumerState<GameContentScreen> {
   }
 
   Iterable<Widget> _buildSlivers(NavigationState state) {
-    return widget.rowsConfig.asMap().entries.map((entry) {
+    return _validRows.asMap().entries.map((entry) {
       final rowIndex = entry.key;
       final config = entry.value;
 
-      if (rowIndex == widget.headerSliverRowIndex &&
-          widget.headerSliver != null) {
+      if (rowIndex == _validHeaderIndex && widget.headerSliver != null) {
         return SliverToBoxAdapter(child: widget.headerSliver!);
       }
 
@@ -135,9 +157,7 @@ class _GameContentScreenState extends ConsumerState<GameContentScreen> {
   }
 
   ScrollController _rowScrollController(int rowIndex) {
-    final scrollIndex = widget.headerSliverRowIndex >= 0
-        ? rowIndex - 1
-        : rowIndex;
+    final scrollIndex = _validHeaderIndex >= 0 ? rowIndex - 1 : rowIndex;
     if (scrollIndex < 0 || scrollIndex >= _rowScrolls.length) {
       return ScrollController();
     }

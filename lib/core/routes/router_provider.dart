@@ -3,11 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:game_tv/core/constants/app_routes.dart';
 import 'package:game_tv/core/providers/dio_client.dart';
 import 'package:game_tv/features/auth/views/auth_screen.dart';
-import 'package:game_tv/features/exclusive_trailers/views/exclusive_trailers_screen.dart';
-import 'package:game_tv/features/game_details/views/game_details_screen.dart';
 import 'package:game_tv/features/home/views/home_screen.dart';
-import 'package:game_tv/features/settings/views/settings_screen.dart';
-import 'package:game_tv/features/upcoming_releases/views/upcoming_releases_screen.dart';
 import 'package:go_router/go_router.dart';
 
 const _publicRoutes = {AppRoutes.auth};
@@ -41,25 +37,25 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.home,
         builder: (context, state) => const HomeScreen(),
       ),
-      GoRoute(
-        path: AppRoutes.upcomingReleases,
-        builder: (context, state) => const UpcomingReleasesScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.exclusiveTrailers,
-        builder: (context, state) => const ExclusiveTrailersScreen(),
-      ),
-      GoRoute(
-        path: '${AppRoutes.gameDetails}/:id',
-        builder: (context, state) {
-          final id = state.pathParameters['id'];
-          return GameDetailsScreen(id: id);
-        },
-      ),
-      GoRoute(
-        path: AppRoutes.settings,
-        builder: (context, state) => const SettingsScreen(),
-      ),
+      // GoRoute(
+      //   path: AppRoutes.upcomingReleases,
+      //   builder: (context, state) => const UpcomingReleasesScreen(),
+      // ),
+      // GoRoute(
+      //   path: AppRoutes.exclusiveTrailers,
+      //   builder: (context, state) => const ExclusiveTrailersScreen(),
+      // ),
+      // GoRoute(
+      //   path: '${AppRoutes.gameDetails}/:id',
+      //   builder: (context, state) {
+      //     final id = state.pathParameters['id'];
+      //     return GameDetailsScreen(id: id);
+      //   },
+      // ),
+      // GoRoute(
+      //   path: AppRoutes.settings,
+      //   builder: (context, state) => const SettingsScreen(),
+      // ),
     ],
   );
 });
