@@ -1,6 +1,6 @@
 {
-    "name": "game_tv",
-    "short_name": "game_tv",
+    "name": "gamespotlight",
+    "short_name": "gamespotlight",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
