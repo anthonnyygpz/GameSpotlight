@@ -52,13 +52,17 @@ class _GenresScreenState extends ConsumerState<GenresScreen> {
         asyncValue: genresAsyncValue,
         builder: (data) {
           final totalItems = data?.length ?? 0;
-          final rowItemCounts = _computeGridRowCounts(totalItems, 4);
+          final rowItemCounts = _computeGridRowCounts(
+            totalItems,
+            _gridCrossAxisCount,
+          );
 
           controller.attachControllers(
             _localMainScroll,
             _localRowScrolls,
             hasHero: false,
             rowHeight: 360.0,
+            isGrid: true,
           );
 
           return SidebarNavigationHandler(
@@ -102,9 +106,8 @@ class _GenresScreenState extends ConsumerState<GenresScreen> {
                       final genres = data?[index];
                       if (genres == null) return const SizedBox.shrink();
 
-                      final int crossAxisCount = 4;
-                      final int rowIndex = index ~/ crossAxisCount;
-                      final int colIndex = index % crossAxisCount;
+                      final int rowIndex = index ~/ _gridCrossAxisCount;
+                      final int colIndex = index % _gridCrossAxisCount;
                       final isFocused =
                           state.row == rowIndex && state.col == colIndex;
 

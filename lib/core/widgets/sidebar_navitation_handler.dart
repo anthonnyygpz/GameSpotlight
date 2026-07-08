@@ -11,12 +11,15 @@ class SidebarNavigationHandler extends ConsumerWidget {
     required this.child,
     required this.rowItemCounts,
     this.onContentSelect,
+    this.onMoveUpOverride,
     this.autofocus = true,
   });
 
   final Widget child;
   final List<int> rowItemCounts;
   final void Function(int row, int col)? onContentSelect;
+  final bool Function(int currentRow, int currentCol, List<int> counts)?
+  onMoveUpOverride;
   final bool autofocus;
 
   KeyEventResult _handle(
@@ -32,6 +35,10 @@ class SidebarNavigationHandler extends ConsumerWidget {
         controller.moveRow(1, rowItemCounts);
         return KeyEventResult.handled;
       case DPadAction.up:
+        if (onMoveUpOverride != null &&
+            onMoveUpOverride!(state.row, state.col, rowItemCounts)) {
+          return KeyEventResult.handled;
+        }
         controller.moveRow(-1, rowItemCounts);
         return KeyEventResult.handled;
       case DPadAction.right:
@@ -49,8 +56,7 @@ class SidebarNavigationHandler extends ConsumerWidget {
         }
         return KeyEventResult.handled;
       case DPadAction.back:
-        return KeyEventResult
-            .ignored; // deja que el sistema/back nativo lo maneje
+        return KeyEventResult.ignored;
     }
   }
 

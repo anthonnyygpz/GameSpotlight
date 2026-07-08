@@ -15,6 +15,7 @@ class NavigationNotifier extends Notifier<NavigationState> {
   double _rowHeight = 185.0;
   double _heroHeight = 320.0;
   bool _hasHero = true;
+  bool _isGridTopology = false;
 
   @override
   NavigationState build() {
@@ -28,12 +29,14 @@ class NavigationNotifier extends Notifier<NavigationState> {
     bool hasHero = true,
     double rowHeight = 185.0,
     double heroHeight = 320.0,
+    bool isGrid = false,
   }) {
     _activeMainScroll = main;
     _activeRowScrolls = rows;
     _hasHero = hasHero;
     _rowHeight = rowHeight;
     _heroHeight = heroHeight;
+    _isGridTopology = isGrid;
   }
 
   void moveRow(int delta, List<int> rowItemCounts) {
@@ -55,16 +58,21 @@ class NavigationNotifier extends Notifier<NavigationState> {
 
     if (newRow == state.row && validCurrentRow == state.row) return;
 
-    _savedCol[validCurrentRow] = state.col;
-    final restoredCol = (_savedCol[newRow] ?? 0).clamp(
-      0,
-      rowItemCounts[newRow] - 1,
-    );
+    int targetCol;
 
-    state = state.copyWith(row: newRow, col: restoredCol);
+    if (_isGridTopology) {
+      // MODO CUADRÍCULA (PlatformsScreen): Mantiene la columna actual (caída en línea recta)
+      targetCol = state.col.clamp(0, rowItemCounts[newRow] - 1);
+    } else {
+      // MODO CARRUSEL (HomeScreen): Guarda la posición y regresa al inicio (0) o a donde se quedó
+      _savedCol[validCurrentRow] = state.col;
+      targetCol = (_savedCol[newRow] ?? 0).clamp(0, rowItemCounts[newRow] - 1);
+    }
+
+    state = state.copyWith(row: newRow, col: targetCol);
 
     _scrollToRow(newRow);
-    _scrollRowToCol(newRow, restoredCol);
+    _scrollRowToCol(newRow, targetCol);
   }
 
   void moveCol(int delta, List<int> rowItemCounts) {
@@ -182,6 +190,13 @@ class NavigationNotifier extends Notifier<NavigationState> {
         }
       }
     }
+  }
+
+  void jumpTo(int targetRow, int targetCol) {
+    state = state.copyWith(row: targetRow, col: targetCol);
+    _savedCol[targetRow] = targetCol;
+    _scrollToRow(targetRow);
+    _scrollRowToCol(targetRow, targetCol);
   }
 }
 
