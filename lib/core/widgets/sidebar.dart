@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/core/constants/menu_items.dart';
-import 'package:game_tv/core/widgets/nav_tile.dart';
+import 'package:gamespotlight/core/constants/menu_items.dart';
+import 'package:gamespotlight/core/widgets/nav_tile.dart';
 import 'package:go_router/go_router.dart';
 
 class Sidebar extends StatelessWidget {

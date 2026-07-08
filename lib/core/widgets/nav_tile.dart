@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/core/models/nav_item.dart';
+import 'package:gamespotlight/core/models/nav_item.dart';
 
 class NavTile extends StatelessWidget {
   final NavItem item;

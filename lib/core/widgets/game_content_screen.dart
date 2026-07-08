@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:game_tv/core/constants/app_constants.dart';
-import 'package:game_tv/core/constants/app_routes.dart';
-import 'package:game_tv/core/models/row_data.dart';
-import 'package:game_tv/core/providers/navigation/navigation_notifier.dart';
-import 'package:game_tv/core/providers/navigation/navigation_state.dart';
-import 'package:game_tv/core/widgets/base_scaffold.dart';
-import 'package:game_tv/core/widgets/content_row.dart';
+import 'package:gamespotlight/core/constants/app_constants.dart';
+import 'package:gamespotlight/core/constants/app_routes.dart';
+import 'package:gamespotlight/core/models/content_section.dart';
+import 'package:gamespotlight/core/models/row_data.dart';
+import 'package:gamespotlight/core/providers/navigation/navigation_notifier.dart';
+import 'package:gamespotlight/core/providers/navigation/navigation_state.dart';
+import 'package:gamespotlight/core/utils/row_scroll_controllers.dart';
+import 'package:gamespotlight/core/widgets/content_row.dart';
+import 'package:gamespotlight/core/widgets/sidebar_navitation_handler.dart';
 import 'package:go_router/go_router.dart';
 
 class GameContentScreen extends ConsumerStatefulWidget {
   const GameContentScreen({
     super.key,
-    required this.rowsConfig,
-    this.headerSliver,
-    this.headerSliverRowIndex = -1,
+    required this.sections,
     this.cardWidth = AppConstants.cardWidth,
     this.cardHeight = AppConstants.cardHeight,
   });
 
-  final List<RowData> rowsConfig;
-  final Widget? headerSliver;
-  final int headerSliverRowIndex;
+  final List<ContentSection> sections;
   final double cardWidth;
   final double cardHeight;
 
@@ -31,70 +29,43 @@ class GameContentScreen extends ConsumerStatefulWidget {
 
 class _GameContentScreenState extends ConsumerState<GameContentScreen> {
   late final ScrollController _mainScroll;
-  late List<ScrollController> _rowScrolls;
+  late RowScrollControllers _rowScrolls;
+  late List<ContentSection> _visible;
 
-  List<RowData> _validRows = [];
-  int _validHeaderIndex = -1;
+  final List<RowData> _validRows = [];
 
   @override
   void initState() {
     super.initState();
     _mainScroll = ScrollController();
-    _updateValidRows();
-    _initScrolls();
-
+    _visible = visibleSections(widget.sections);
+    _rowScrolls = RowScrollControllers(_visible.length);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(navigationProvider.notifier)
-          .attachControllers(_mainScroll, _rowScrolls);
+          .attachControllers(_mainScroll, _rowScrolls.all);
     });
-  }
-
-  void _updateValidRows() {
-    _validRows = [];
-    _validHeaderIndex = -1;
-
-    for (int i = 0; i < widget.rowsConfig.length; i++) {
-      final config = widget.rowsConfig[i];
-      final isHeader = i == widget.headerSliverRowIndex;
-
-      if (config.items.isNotEmpty || isHeader) {
-        if (isHeader) {
-          _validHeaderIndex = _validRows.length;
-        }
-        _validRows.add(config);
-      }
-    }
-  }
-
-  void _initScrolls() {
-    _rowScrolls = List.generate(_validRows.length, (_) => ScrollController());
   }
 
   @override
   void didUpdateWidget(covariant GameContentScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     final oldLength = _validRows.length;
-
-    _updateValidRows();
+    _visible = visibleSections(widget.sections);
 
     if (oldLength != _validRows.length) {
-      for (final c in _rowScrolls) {
-        c.dispose();
-      }
-      _initScrolls();
+      _rowScrolls.disposeAll();
+      _rowScrolls = RowScrollControllers(_visible.length);
       ref
           .read(navigationProvider.notifier)
-          .attachControllers(_mainScroll, _rowScrolls);
+          .attachControllers(_mainScroll, _rowScrolls.all);
     }
   }
 
   @override
   void dispose() {
     _mainScroll.dispose();
-    for (final c in _rowScrolls) {
-      c.dispose();
-    }
+    _rowScrolls.disposeAll();
     super.dispose();
   }
 
@@ -103,9 +74,16 @@ class _GameContentScreenState extends ConsumerState<GameContentScreen> {
     final state = ref.watch(navigationProvider);
     final notifier = ref.read(navigationProvider.notifier);
 
-    return BaseScaffold(
-      // Pasamos estrictamente las filas válidas
-      rowItemCounts: _validRows.map((r) => r.totalCount).toList(),
+    notifier.attachControllers(
+      _mainScroll,
+      _rowScrolls.all,
+      hasHero: true,
+      rowHeight: 185.0,
+      heroHeight: 320.0,
+    );
+
+    return SidebarNavigationHandler(
+      rowItemCounts: _visible.map((s) => s.data.totalCount).toList(),
       onContentSelect: (row, col) => _handleSelect(row, col, notifier),
       child: CustomScrollView(
         controller: _mainScroll,
@@ -119,48 +97,58 @@ class _GameContentScreenState extends ConsumerState<GameContentScreen> {
   }
 
   void _handleSelect(int row, int col, NavigationNotifier notifier) {
-    final config = _validRows[row];
+    if (row < 0 || row >= _visible.length) return;
 
-    if (config.hasTrailingAction && col == config.items.length) {
-      notifier.resetPosition();
-      context.push(config.targetRoute!);
+    final section = _visible[row];
+    final data = section.data;
+
+    if (data.items.isEmpty) return;
+
+    if (section is HeaderSection) {
+      final safeIndex = (col >= 0 && col < data.items.length) ? col : 0;
+      final heroGame = data.items[safeIndex];
+
+      context.push(AppRoutes.gameDetailsPath(heroGame.id));
       return;
     }
 
-    final selected = config.items[col];
-    context.push('${AppRoutes.gameDetails}/${selected.id}');
+    if (col == data.items.length) {
+      if (data.targetRoute != null) {
+        notifier.resetPosition();
+        context.push(data.targetRoute!);
+      }
+      return;
+    }
+
+    if (col >= 0 && col < data.items.length) {
+      final selectedGame = data.items[col];
+      context.push(AppRoutes.gameDetailsPath(selectedGame.id));
+    }
   }
 
   Iterable<Widget> _buildSlivers(NavigationState state) {
-    return _validRows.asMap().entries.map((entry) {
+    return _visible.asMap().entries.map((entry) {
       final rowIndex = entry.key;
-      final config = entry.value;
+      final section = entry.value;
 
-      if (rowIndex == _validHeaderIndex && widget.headerSliver != null) {
-        return SliverToBoxAdapter(child: widget.headerSliver!);
-      }
-
-      return SliverToBoxAdapter(
-        child: ContentRow(
-          title: config.title,
-          items: config.items,
-          cardWidth: widget.cardWidth,
-          cardHeight: widget.cardHeight,
-          showDate: config.showDate,
-          showBadgeTop: config.showBadgeTop,
-          trailingLabel: config.hasTrailingAction ? 'VER TODOS' : null,
-          focusedCol: state.row == rowIndex ? state.col : -1,
-          scrollController: _rowScrollController(rowIndex),
+      return switch (section) {
+        HeaderSection(widget: final headerWidget) => SliverToBoxAdapter(
+          child: headerWidget,
         ),
-      );
+        RowSection(data: final data) => SliverToBoxAdapter(
+          child: ContentRow(
+            title: data.title,
+            items: data.items,
+            cardWidth: widget.cardWidth,
+            cardHeight: widget.cardHeight,
+            showDate: data.showDate,
+            showBadgeTop: data.showBadgeTop,
+            trailingLabel: data.hasTrailingAction ? 'VER TODOS' : null,
+            focusedCol: state.row == rowIndex ? state.col : -1,
+            scrollController: _rowScrolls.forRow(rowIndex),
+          ),
+        ),
+      };
     });
-  }
-
-  ScrollController _rowScrollController(int rowIndex) {
-    final scrollIndex = _validHeaderIndex >= 0 ? rowIndex - 1 : rowIndex;
-    if (scrollIndex < 0 || scrollIndex >= _rowScrolls.length) {
-      return ScrollController();
-    }
-    return _rowScrolls[scrollIndex];
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:game_tv/core/widgets/loading_expressive.dart';
+import 'package:gamespotlight/core/widgets/loading_expressive.dart';
 
 class AsyncUIBuilder<T> extends StatelessWidget {
   const AsyncUIBuilder({
@@ -28,29 +28,27 @@ class AsyncUIBuilder<T> extends StatelessWidget {
   }
 
   Widget _buildData(T value) {
-    return Scaffold(body: builder(value));
+    return builder(value);
   }
 
   Widget _buildError(ColorScheme cs, Object error) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.warning_amber_rounded, color: cs.error, size: 48),
-            const SizedBox(height: 16),
-            Text(
-              'Anomalía detectada:\n$error',
-              textAlign: .center,
-              style: TextStyle(color: cs.error),
-            ),
-          ],
-        ),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.warning_amber_rounded, color: cs.error, size: 48),
+          const SizedBox(height: 16),
+          Text(
+            'Anomalía detectada:\n$error',
+            textAlign: .center,
+            style: TextStyle(color: cs.error),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildLoading() {
-    return const Scaffold(body: LoadingExpressive());
+    return const LoadingExpressive();
   }
 }

@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:game_tv/core/domain/games/entities/game_entity.dart';
-import 'package:game_tv/core/network/memory_cache_manager.dart';
+import 'package:gamespotlight/core/domain/games/entities/game_entity.dart';
+import 'package:gamespotlight/core/network/memory_cache_manager.dart';
+import 'package:smart_date_formatter/smart_date_formatter.dart';
 
 class GameCard extends StatelessWidget {
   const GameCard({
@@ -13,6 +14,7 @@ class GameCard extends StatelessWidget {
     required this.showPlayButton,
     required this.showDate,
     required this.showBadgeTop,
+    this.showFavorite = false,
   });
 
   final GameEntity item;
@@ -22,16 +24,17 @@ class GameCard extends StatelessWidget {
   final bool showPlayButton;
   final bool showDate;
   final bool showBadgeTop;
+  final bool showFavorite;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
     return AnimatedScale(
-      scale: isFocused ? 1.06 : 1.0,
-      duration: const Duration(milliseconds: 150),
+      scale: isFocused ? 1.06 : 0.95,
+      duration: const Duration(milliseconds: 200),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 200),
         width: width,
         height: height,
         decoration: _buildDecoration(cs),
@@ -41,22 +44,22 @@ class GameCard extends StatelessWidget {
             children: [
               _buildImage(cs),
               _shimmerOverlay(cs),
-              // if (item.badge != null && !showBadgeTop)
-              // Positioned(
-              //   top: 10,
-              //   left: 10,
-              //   child: Badge(
-              //     label: Text(
-              //       item.badge!,
-              //       style: TextStyle(
-              //         fontSize: 9,
-              //         fontWeight: FontWeight.w700,
-              //         letterSpacing: 1,
-              //       ),
-              //     ),
-              //     backgroundColor: colorScheme.primary,
-              //   ),
-              // ),
+              if (item.releaseDate != null && !showBadgeTop)
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Badge(
+                    label: Text(
+                      item.releaseDate?.format('dd/MM/yyyy') ?? '',
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    backgroundColor: cs.primary.withValues(alpha: 0.6),
+                  ),
+                ),
               // if (item.badge != null && showBadgeTop)
               // Positioned(
               //   top: 10,
@@ -80,7 +83,7 @@ class GameCard extends StatelessWidget {
               //     ),
               //   ),
               // ),
-              if (showDate && item.date != null)
+              if (showDate && item.editor != null)
                 Positioned(
                   top: 10,
                   left: 10,
@@ -97,7 +100,7 @@ class GameCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      item.date.toString(),
+                      item.editor.toString(),
                       style: TextStyle(
                         color: cs.secondary,
                         fontSize: 9,
@@ -132,24 +135,24 @@ class GameCard extends StatelessWidget {
                               item.title,
                               style: TextStyle(
                                 color: cs.onPrimary,
-                                fontSize: 15,
+                                fontSize: 10,
+                                fontFamily: 'Azonix',
                                 fontWeight: FontWeight.w900,
-                                letterSpacing: 0.5,
                                 height: 1.1,
                               ),
                             ),
-                            // if (item.editor != null) ...[
-                            //   const SizedBox(height: 2),
-                            //   Text(
-                            //     item.editor ?? '',
-                            //     style: TextStyle(
-                            //       color: cs.onSecondary,
-                            //       fontSize: 9,
-                            //       letterSpacing: 1,
-                            //       fontWeight: FontWeight.w500,
-                            //     ),
-                            //   ),
-                            // ],
+                            if (item.editor != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                item.editor ?? 'Desconocido',
+                                style: TextStyle(
+                                  color: cs.onSecondary,
+                                  fontSize: 9,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -170,6 +173,28 @@ class GameCard extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.play_arrow_rounded,
+                            color: cs.onPrimary,
+                            size: 18,
+                          ),
+                        ),
+
+                      if (showFavorite)
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: isFocused
+                                ? cs.primary
+                                : cs.surface.withValues(alpha: 0.8),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isFocused
+                                  ? cs.secondary
+                                  : cs.onTertiary.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.favorite,
                             color: cs.onPrimary,
                             size: 18,
                           ),
@@ -215,7 +240,7 @@ class GameCard extends StatelessWidget {
   }
 
   Widget _shimmerOverlay(ColorScheme cs) {
-    // if (item.bannerUrl == null) return const SizedBox.shrink();
+    if (item.bannerUrl == null) return const SizedBox.shrink();
 
     return Positioned.fill(
       child: DecoratedBox(

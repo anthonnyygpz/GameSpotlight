@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/core/domain/games/entities/game_entity.dart';
-import 'package:game_tv/core/widgets/game_card.dart';
+import 'package:gamespotlight/core/domain/games/entities/game_entity.dart';
+import 'package:gamespotlight/core/widgets/game_card.dart';
+import 'package:go_router/go_router.dart';
 
 class ContentRow extends StatelessWidget {
   const ContentRow({
@@ -15,6 +16,7 @@ class ContentRow extends StatelessWidget {
     this.showDate = false,
     this.showBadgeTop = false,
     this.trailingLabel,
+    this.targetRoute,
   });
 
   final String title;
@@ -27,9 +29,12 @@ class ContentRow extends StatelessWidget {
   final String? trailingLabel;
   final int focusedCol;
   final ScrollController scrollController;
+  final String? targetRoute;
 
   @override
   Widget build(BuildContext context) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
     final hasTrailingAction = trailingLabel != null;
     final totalItems = hasTrailingAction ? items.length + 1 : items.length;
 
@@ -46,10 +51,12 @@ class ContentRow extends StatelessWidget {
               controller: scrollController,
               scrollDirection: Axis.horizontal,
               physics: const NeverScrollableScrollPhysics(),
-              padding: const .symmetric(horizontal: 20),
+              padding: const .symmetric(horizontal: 20, vertical: 10),
               itemCount: totalItems,
-              itemExtent: cardWidth + 12,
-              itemBuilder: (context, index) => _buildItem(context, index),
+              itemExtent: cardWidth,
+              itemBuilder: (context, index) {
+                return _buildItem(context, index);
+              },
             ),
           ),
         ],
@@ -59,11 +66,17 @@ class ContentRow extends StatelessWidget {
 
   Widget _buildItem(BuildContext context, int index) {
     final isTrailing = trailingLabel != null && index == items.length;
+
     if (isTrailing) {
       return RepaintBoundary(
         child: _TrailingCard(
           label: trailingLabel!,
           isFocused: focusedCol == index,
+          onTap: () {
+            if (targetRoute != null) {
+              context.push(targetRoute!);
+            }
+          },
         ),
       );
     }
@@ -151,10 +164,15 @@ class _ScrollHint extends StatelessWidget {
 }
 
 class _TrailingCard extends StatelessWidget {
-  const _TrailingCard({required this.label, required this.isFocused});
+  const _TrailingCard({
+    required this.label,
+    required this.isFocused,
+    required this.onTap,
+  });
 
   final String label;
   final bool isFocused;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -163,34 +181,37 @@ class _TrailingCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          color: isFocused
-              ? cs.primary.withValues(alpha: 0.15)
-              : cs.surface.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isFocused ? cs.primary : Colors.transparent,
-            width: 2.5,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            color: isFocused
+                ? cs.primary.withValues(alpha: 0.15)
+                : cs.surface.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isFocused ? cs.primary : Colors.transparent,
+              width: 2.5,
+            ),
           ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.add_circle_outline_rounded, size: 28, color: color),
-              const SizedBox(height: 8),
-              Text(
-                label.toUpperCase(),
-                style: TextStyle(
-                  color: color,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add_circle_outline_rounded, size: 28, color: color),
+                const SizedBox(height: 8),
+                Text(
+                  label.toUpperCase(),
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

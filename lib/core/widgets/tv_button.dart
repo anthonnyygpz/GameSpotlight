@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:game_tv/core/widgets/loading_expressive.dart';
+import 'package:gamespotlight/core/widgets/loading_expressive.dart';
 
 class TvButton extends StatefulWidget {
   const TvButton({
@@ -15,8 +15,10 @@ class TvButton extends StatefulWidget {
     this.autofocus = false,
     this.variant = TvButtonVariant.filled,
     this.colorText = Colors.white,
+    this.colorIcon = Colors.white,
     required this.onPressed,
     this.isLoading = false,
+    this.isFocusedOverride,
   }) : assert(
          label != null || icon != null,
          'TvButton requiere al menos label o icon',
@@ -33,8 +35,10 @@ class TvButton extends StatefulWidget {
     this.padding,
     this.autofocus = false,
     this.colorText = Colors.white,
+    this.colorIcon = Colors.white,
     required this.onPressed,
     this.isLoading = false,
+    this.isFocusedOverride,
   }) : variant = TvButtonVariant.ghost;
 
   const TvButton.outlined({
@@ -48,8 +52,10 @@ class TvButton extends StatefulWidget {
     this.padding,
     this.autofocus = false,
     this.colorText = Colors.white,
+    this.colorIcon = Colors.white,
     required this.onPressed,
     this.isLoading = false,
+    this.isFocusedOverride,
   }) : variant = TvButtonVariant.outlined;
 
   final String? label;
@@ -62,8 +68,10 @@ class TvButton extends StatefulWidget {
   final bool autofocus;
   final TvButtonVariant variant;
   final Color colorText;
+  final Color colorIcon;
   final VoidCallback onPressed;
   final bool isLoading;
+  final bool? isFocusedOverride;
 
   @override
   State<TvButton> createState() => _TvButtonState();
@@ -85,9 +93,11 @@ class _TvButtonState extends State<TvButton> {
     LogicalKeyboardKey.gameButtonA,
   };
 
-  bool _isFocused = false;
+  bool _internalFocused = false;
+  bool get _isFocused => widget.isFocusedOverride ?? _internalFocused;
 
-  void _onFocusChange(bool hasFocus) => setState(() => _isFocused = hasFocus);
+  void _onFocusChange(bool hasFocus) =>
+      setState(() => _internalFocused = hasFocus);
 
   KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
     if (event is KeyDownEvent && _acceptedKeys.contains(event.logicalKey)) {
@@ -124,6 +134,7 @@ class _TvButtonState extends State<TvButton> {
               textSize: widget.textSize,
               colorText: widget.colorText,
               isLoading: widget.isLoading,
+              colorIcon: widget.colorIcon,
             ),
           ),
         ),
@@ -183,6 +194,7 @@ class _ButtonContent extends StatelessWidget {
     required this.iconSize,
     required this.textSize,
     required this.colorText,
+    required this.colorIcon,
     required this.isLoading,
   });
 
@@ -191,6 +203,7 @@ class _ButtonContent extends StatelessWidget {
   final double iconSize;
   final double textSize;
   final Color colorText;
+  final Color colorIcon;
   final bool isLoading;
 
   @override
@@ -210,11 +223,9 @@ class _ButtonContent extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 5,
         children: [
-          if (icon != null) ...[
-            Icon(icon, color: colorText, size: iconSize),
-            const SizedBox(width: 5),
-          ],
+          if (icon != null) ...[Icon(icon, color: colorIcon, size: iconSize)],
           if (label != null)
             Text(
               label!,
