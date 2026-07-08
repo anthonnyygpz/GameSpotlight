@@ -10,6 +10,8 @@ import 'package:gamespotlight/features/game_details/views/game_details_screen.da
 import 'package:gamespotlight/features/genres/presentation/game_genre_screen.dart';
 import 'package:gamespotlight/features/genres/presentation/genres_screen.dart';
 import 'package:gamespotlight/features/home/presentation/home_screen.dart';
+import 'package:gamespotlight/features/platforms/presentation/game_platform_screen.dart';
+import 'package:gamespotlight/features/platforms/presentation/platforms_screen.dart';
 import 'package:gamespotlight/features/settings/presentation/edit_profile_screen.dart';
 import 'package:gamespotlight/features/settings/presentation/settings_screen.dart';
 import 'package:gamespotlight/features/upcoming_releases/views/upcoming_releases_screen.dart';
@@ -63,6 +65,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
 
+      GoRoute(
+        path: '${AppRoutes.gamePlatforms}/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'];
+          return GamePlatformScreen(id: id);
+        },
+      ),
+
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
@@ -89,6 +99,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.genres,
             builder: (context, state) => const GenresScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.platforms,
+            builder: (context, state) => const PlatformsScreen(),
           ),
         ],
       ),

@@ -11,4 +11,7 @@ class AppRoutes {
   static const String genres = '/genres';
   static const String gameGenre = '/game-genre';
   static String gameGenrePath(String id) => '/game-genre/$id';
+  static const String platforms = '/platforms';
+  static const String gamePlatforms = '/game-platforms';
+  static String gamePlatformsPath(String id) => '/game-platforms/$id';
 }

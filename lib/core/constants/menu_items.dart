@@ -19,7 +19,11 @@ const globalNavItems = [
     label: 'GÉNEROS',
     route: AppRoutes.genres,
   ),
-  NavItem(icon: Icons.tv_rounded, label: 'PLATAFORMAS', route: ''),
+  NavItem(
+    icon: Icons.tv_rounded,
+    label: 'PLATAFORMAS',
+    route: AppRoutes.platforms,
+  ),
   NavItem(
     icon: Icons.favorite_rounded,
     label: 'FAVORITOS',
