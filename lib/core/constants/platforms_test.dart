@@ -1,28 +1,28 @@
 import 'package:gamespotlight/core/domain/platforms/entities/platforms_entity.dart';
 
-final List<PlatformsEntity> mockPlatformsList = [
-  PlatformsEntity(
-    idPlatform: '1',
-    nombre: 'PC',
-    tipo: 'Computadora',
+final List<PlatformEntity> mockPlatformsList = [
+  PlatformEntity(
+    id: '1',
+    name: 'PC',
+    type: 'Computadora',
     iconUrl: 'https://www.google.com',
   ),
-  PlatformsEntity(
-    idPlatform: '2',
-    nombre: 'PlayStation 5',
-    tipo: 'Consola',
+  PlatformEntity(
+    id: '2',
+    name: 'PlayStation 5',
+    type: 'Consola',
     iconUrl: 'https://www.google.com',
   ),
-  PlatformsEntity(
-    idPlatform: '3',
-    nombre: 'Xbox Series X/S',
-    tipo: 'Consola',
+  PlatformEntity(
+    id: '3',
+    name: 'Xbox Series X/S',
+    type: 'Consola',
     iconUrl: 'https://www.google.com',
   ),
-  PlatformsEntity(
-    idPlatform: '4',
-    nombre: 'Nintendo Switch',
-    tipo: 'Consola Portatil',
+  PlatformEntity(
+    id: '4',
+    name: 'Nintendo Switch',
+    type: 'Consola Portatil',
     iconUrl: 'https://www.google.com',
   ),
 ];

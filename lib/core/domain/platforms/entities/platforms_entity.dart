@@ -1,13 +1,13 @@
-class PlatformsEntity {
-  final String idPlatform;
-  final String nombre;
-  final String tipo;
+class PlatformEntity {
+  final String id;
+  final String name;
+  final String type;
   final String iconUrl;
 
-  const PlatformsEntity({
-    required this.idPlatform,
-    required this.nombre,
-    required this.tipo,
+  const PlatformEntity({
+    required this.id,
+    required this.name,
+    required this.type,
     required this.iconUrl,
   });
 }
