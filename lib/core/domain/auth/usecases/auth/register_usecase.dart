@@ -1,5 +1,5 @@
-import 'package:game_tv/core/domain/auth/entity/auth_response_entity.dart';
-import 'package:game_tv/core/domain/auth/repository/auth_repository.dart';
+import 'package:gamespotlight/core/domain/auth/entity/auth_entity.dart';
+import 'package:gamespotlight/core/domain/auth/repository/auth_repository.dart';
 
 class RegisterParams {
   const RegisterParams({
@@ -19,7 +19,7 @@ class RegisterUseCase {
   const RegisterUseCase(this._authRepository);
   final AuthRepository _authRepository;
 
-  Future<AuthResponseEntity> call(RegisterParams params) async {
+  Future<AuthEntity> call(RegisterParams params) async {
     return await _authRepository.register(params);
   }
 }

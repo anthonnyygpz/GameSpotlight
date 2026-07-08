@@ -1,15 +1,15 @@
-import 'package:game_tv/core/domain/games/entities/trailer_entity.dart';
+import 'package:gamespotlight/core/domain/games/entities/trailer_entity.dart';
 
 class GameDetailEntity {
   const GameDetailEntity({
-    required this.gameId,
+    required this.id,
     required this.title,
     required this.slug,
-    required this.description,
+    required this.synopsis,
     required this.releaseDate,
     required this.developer,
-    required this.publisher,
-    required this.coverImage,
+    required this.editor,
+    required this.coverImageUrl,
     required this.bannerUrl,
     required this.status,
     required this.featured,
@@ -18,17 +18,17 @@ class GameDetailEntity {
     required this.trailers,
   });
 
-  final String gameId;
+  final String id;
   final String title;
   final String slug;
-  final String? description;
+  final String? synopsis;
   final DateTime? releaseDate;
   final String? developer;
-  final String? publisher;
-  final String coverImage;
+  final String? editor;
+  final String coverImageUrl;
   final String bannerUrl;
   final String status;
-  final bool featured;
+  final String featured;
   final String genres;
   final String platforms;
   final List<TrailerEntity> trailers;

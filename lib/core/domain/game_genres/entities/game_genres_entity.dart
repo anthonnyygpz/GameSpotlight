@@ -1,3 +1,0 @@
-class GameGenresEntity {
-  const GameGenresEntity();
-}

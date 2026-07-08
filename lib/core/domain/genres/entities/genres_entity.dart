@@ -1,13 +1,13 @@
-class GenresEntity {
-  final String idGenero;
-  final String nombre;
-  final String descripcion;
-  final String iconUrl;
-
-  const GenresEntity({
-    required this.idGenero,
-    required this.nombre,
-    required this.descripcion,
+class GenreEntity {
+  const GenreEntity({
+    required this.id,
+    required this.name,
+    required this.description,
     required this.iconUrl,
   });
+
+  final String id;
+  final String name;
+  final String description;
+  final String iconUrl;
 }
