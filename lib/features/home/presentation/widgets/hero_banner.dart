@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/core/domain/games/entities/game_entity.dart';
-import 'package:game_tv/core/widgets/static_button.dart';
+import 'package:gamespotlight/core/domain/games/entities/game_entity.dart';
+import 'package:gamespotlight/core/domain/games/entities/game_entity_extensions.dart';
+import 'package:gamespotlight/core/widgets/static_button.dart';
 
 class HeroBanner extends StatelessWidget {
   const HeroBanner({
@@ -22,6 +23,8 @@ class HeroBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (heroSlides.isEmpty) return const SizedBox.shrink();
+
     final cs = Theme.of(context).colorScheme;
 
     return AnimatedContainer(
@@ -29,16 +32,16 @@ class HeroBanner extends StatelessWidget {
       height: _bannerHeight,
       decoration: _buildDecoration(cs),
       child: ClipRRect(
-        borderRadius: .circular(_borderRadius - 2),
+        borderRadius: BorderRadius.circular(_borderRadius - 2),
         child: Stack(
           children: [
-            _BackgroundGlow(cs: cs),
             _BannerContent(slide: _currentSlide, cs: cs),
             _LaunchDataBadge(slide: _currentSlide, cs: cs),
             _SlideIndicators(
               count: heroSlides.length,
               currentIndex: currentIndex,
               cs: cs,
+              padding: _padding,
             ),
           ],
         ),
@@ -52,32 +55,10 @@ class HeroBanner extends StatelessWidget {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(_borderRadius),
       image: DecorationImage(
-        image: NetworkImage(_currentSlide.bannerUrl),
+        image: NetworkImage(_currentSlide.bannerUrl ?? ''),
         fit: BoxFit.cover,
       ),
       border: Border.all(color: borderColor, width: 2.5),
-    );
-  }
-}
-
-class _BackgroundGlow extends StatelessWidget {
-  const _BackgroundGlow({required this.cs});
-
-  final ColorScheme cs;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      right: -40,
-      top: -40,
-      child: Container(
-        width: 320,
-        height: 320,
-        decoration: BoxDecoration(
-          shape: .circle,
-          color: cs.primary.withValues(alpha: 0.08),
-        ),
-      ),
     );
   }
 }
@@ -91,7 +72,7 @@ class _BannerContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const .all(36),
+      padding: const EdgeInsets.all(36),
       child: Column(
         crossAxisAlignment: .start,
         mainAxisAlignment: .center,
@@ -100,15 +81,16 @@ class _BannerContent extends StatelessWidget {
           Text(
             slide.title,
             style: const TextStyle(
-              fontSize: 46,
+              fontFamily: 'Azonix',
+              fontSize: 26,
               fontWeight: FontWeight.w900,
-              letterSpacing: 2,
               height: 1.0,
             ),
           ),
           const SizedBox(height: 10),
+
           Text(
-            'Editor Desconocido',
+            slide.editor ?? '',
             style: TextStyle(
               color: cs.onSecondary,
               fontSize: 14,
@@ -139,8 +121,6 @@ class _LaunchDataBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final releaseDay = slide.date ?? '';
-
     return Positioned(
       top: 20,
       right: 20,
@@ -148,15 +128,16 @@ class _LaunchDataBadge extends StatelessWidget {
         padding: const .all(12),
         decoration: BoxDecoration(
           color: cs.surface.withValues(alpha: 0.9),
-          borderRadius: .circular(10),
-          border: .all(color: cs.primary, width: 1.5),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: cs.primary, width: 1.5),
         ),
         child: Column(
           children: [
             const Text('LANZAMIENTO'),
             Text(
-              releaseDay.toString(),
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
+              slide.formattedReleaseDate,
+              textAlign: .center,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
             ),
           ],
         ),
@@ -170,17 +151,19 @@ class _SlideIndicators extends StatelessWidget {
     required this.count,
     required this.currentIndex,
     required this.cs,
+    required this.padding,
   });
 
   final int count;
   final int currentIndex;
   final ColorScheme cs;
+  final double padding;
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
       bottom: 20,
-      left: HeroBanner._padding,
+      left: padding,
       child: Row(children: List.generate(count, _buildDot)),
     );
   }
@@ -190,12 +173,12 @@ class _SlideIndicators extends StatelessWidget {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin: const .only(right: 6),
+      margin: const EdgeInsets.only(right: 6),
       width: isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
         color: isActive ? cs.primary : cs.onTertiary,
-        borderRadius: .circular(4),
+        borderRadius: BorderRadius.circular(4),
       ),
     );
   }

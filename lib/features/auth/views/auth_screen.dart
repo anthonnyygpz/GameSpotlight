@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/features/auth/views/widgets/login_form.dart';
-import 'package:game_tv/features/auth/views/widgets/register_form.dart';
+import 'package:gamespotlight/features/auth/views/widgets/login_form.dart';
+import 'package:gamespotlight/features/auth/views/widgets/register_form.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:game_tv/core/domain/auth/usecases/auth/login_usecase.dart';
-import 'package:game_tv/core/providers/auth/auth_provider.dart';
-import 'package:game_tv/core/utils/validators.dart';
-import 'package:game_tv/core/widgets/tv_button.dart';
-import 'package:game_tv/core/widgets/tv_text_field.dart';
-import 'package:game_tv/features/auth/views/widgets/more_form_login.dart';
+import 'package:gamespotlight/core/domain/auth/usecases/auth/login_usecase.dart';
+import 'package:gamespotlight/core/providers/auth/auth_provider.dart';
+import 'package:gamespotlight/core/utils/validators.dart';
+import 'package:gamespotlight/core/widgets/tv_button.dart';
+import 'package:gamespotlight/core/widgets/tv_text_field.dart';
+import 'package:gamespotlight/features/auth/views/widgets/more_form_login.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key, required this.onSwitch});

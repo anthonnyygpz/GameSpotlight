@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/features/auth/views/widgets/card_glass.dart';
+import 'package:gamespotlight/core/widgets/card_glass.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 const _qrData = 'lorem ipsum dolor sit amet';

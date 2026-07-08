@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:game_tv/core/providers/auth/auth_provider.dart';
-import 'package:game_tv/core/widgets/base_scaffold.dart';
-import 'package:game_tv/features/settings/models/setting_tab.dart';
+import 'package:gamespotlight/core/constants/app_routes.dart';
+import 'package:gamespotlight/core/providers/auth/auth_provider.dart';
+import 'package:gamespotlight/core/widgets/async_ui_builder.dart';
+import 'package:gamespotlight/core/widgets/d_pad.dart';
+import 'package:gamespotlight/core/widgets/sidebar_navitation_handler.dart';
+import 'package:gamespotlight/features/settings/models/setting_tab.dart';
+import 'package:go_router/go_router.dart';
 
 const _tabs = [
   SettingsTab(label: 'PERFIL Y CUENTA', icon: Icons.person_outline),
@@ -34,104 +37,96 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   int _focusedTab = 0;
   int _focusedAction = 0;
 
-  static const _kActionCount = 4;
+  static const _actionCount = 4;
 
-  KeyEventResult _handleKey(KeyEvent event) {
-    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
-      return KeyEventResult.ignored;
+  KeyEventResult _handleAction(DPadAction action) {
+    switch (_zone) {
+      case FocusZone.sidebar:
+        return _handleSidebarZone(action);
+      case FocusZone.tabs:
+        return _handleTabsZone(action);
+      case FocusZone.actions:
+        return _handleActionsZone(action);
     }
+  }
 
-    final key = event.logicalKey;
-
-    // ── Zona: Sidebar ─────────────────────────────────────────────────────
-    if (_zone == FocusZone.sidebar) {
-      if (key == LogicalKeyboardKey.arrowRight) {
-        setState(() {
-          _zone = FocusZone.tabs;
-          _focusedTab = _selectedTab;
-        });
-        // Ignoramos: BaseScaffold recibe la tecla y aplica un delta de +1
-        return KeyEventResult.ignored;
-      }
-      return KeyEventResult.ignored;
+  KeyEventResult _handleSidebarZone(DPadAction action) {
+    if (action == DPadAction.right) {
+      setState(() {
+        _zone = FocusZone.tabs;
+        _focusedTab = _selectedTab;
+      });
     }
+    return KeyEventResult.ignored;
+  }
 
-    // ── Zona: Tabs ────────────────────────────────────────────────────────
-    if (_zone == FocusZone.tabs) {
-      if (key == LogicalKeyboardKey.arrowUp) {
+  KeyEventResult _handleTabsZone(DPadAction action) {
+    switch (action) {
+      case DPadAction.up:
         setState(
           () => _focusedTab = (_focusedTab - 1).clamp(0, _tabs.length - 1),
         );
         return KeyEventResult.handled;
-      }
-      if (key == LogicalKeyboardKey.arrowDown) {
+      case DPadAction.down:
         setState(
           () => _focusedTab = (_focusedTab + 1).clamp(0, _tabs.length - 1),
         );
         return KeyEventResult.handled;
-      }
-      if (key == LogicalKeyboardKey.arrowLeft) {
+      case DPadAction.left:
         setState(() => _zone = FocusZone.sidebar);
-        // Ignoramos: BaseScaffold recibe la tecla y aplica un delta de -1
         return KeyEventResult.ignored;
-      }
-      if (key == LogicalKeyboardKey.arrowRight) {
+      case DPadAction.right:
         setState(() {
           _zone = FocusZone.actions;
           _focusedAction = 0;
         });
-        // Consumimos: No queremos que el global avance, Actions es navegación interna
         return KeyEventResult.handled;
-      }
-      if (key == LogicalKeyboardKey.select || key == LogicalKeyboardKey.enter) {
+      case DPadAction.select:
         setState(() => _selectedTab = _focusedTab);
         return KeyEventResult.handled;
-      }
-      return KeyEventResult.handled;
+      case DPadAction.back:
+        return KeyEventResult.handled;
     }
+  }
 
-    // ── Zona: Actions ─────────────────────────────────────────────────────
-    if (_zone == FocusZone.actions) {
-      if (key == LogicalKeyboardKey.arrowUp) {
+  KeyEventResult _handleActionsZone(DPadAction action) {
+    switch (action) {
+      case DPadAction.up:
         setState(
           () =>
-              _focusedAction = (_focusedAction - 1).clamp(0, _kActionCount - 1),
+              _focusedAction = (_focusedAction - 1).clamp(0, _actionCount - 1),
         );
         return KeyEventResult.handled;
-      }
-      if (key == LogicalKeyboardKey.arrowDown) {
+      case DPadAction.down:
         setState(
           () =>
-              _focusedAction = (_focusedAction + 1).clamp(0, _kActionCount - 1),
+              _focusedAction = (_focusedAction + 1).clamp(0, _actionCount - 1),
         );
         return KeyEventResult.handled;
-      }
-      if (key == LogicalKeyboardKey.arrowLeft) {
+      case DPadAction.left:
         setState(() {
           _zone = FocusZone.tabs;
           _focusedTab = _selectedTab;
         });
-        // Consumimos: Retornamos a los Tabs internos, el global sigue en col = 0
         return KeyEventResult.handled;
-      }
-      if (key == LogicalKeyboardKey.select || key == LogicalKeyboardKey.enter) {
+      case DPadAction.select:
         _handleActionSelect(_focusedAction);
         return KeyEventResult.handled;
-      }
-      return KeyEventResult.handled;
+      case DPadAction.right:
+      case DPadAction.back:
+        return KeyEventResult.handled;
     }
-
-    return KeyEventResult.ignored;
   }
 
   void _handleActionSelect(int action) {
     switch (action) {
       case 0:
-        break; // Editar perfil
+        context.push(AppRoutes.editProfile);
+        break;
       case 1:
-        break; // Ver dispositivos
+        break;
       case 2:
-        break; // Cambiar contraseña
+        break;
       case 3:
         _logout();
     }
@@ -139,27 +134,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   void _logout() => ref.read(logoutProvider)();
 
-  // ─── Build ────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(
+    return SidebarNavigationHandler(
       rowItemCounts: const [1],
-      keyHandler: _handleKey,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _TabColumn(
-              tabs: _tabs,
-              selectedTab: _selectedTab,
-              focusedTab: _focusedTab,
-              isActive: _zone == FocusZone.tabs,
-            ),
-            const SizedBox(width: 24),
-            Expanded(child: _buildPanel()),
-          ],
+      autofocus: false,
+      child: DPadListener(
+        autofocus: true,
+        onAction: _handleAction,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _TabColumn(
+                tabs: _tabs,
+                selectedTab: _selectedTab,
+                focusedTab: _focusedTab,
+                isActive: _zone == FocusZone.tabs,
+              ),
+              const SizedBox(width: 24),
+              Expanded(child: _buildPanel()),
+            ],
+          ),
         ),
       ),
     );
@@ -275,133 +272,139 @@ class _TabItem extends StatelessWidget {
 
 // ─── Account panel ────────────────────────────────────────────────────────────
 
-class _AccountPanel extends StatelessWidget {
+class _AccountPanel extends ConsumerWidget {
   const _AccountPanel({required this.focusedAction, required this.onLogout});
 
   final int focusedAction;
   final VoidCallback onLogout;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: _bgCard,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(28),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'AJUSTES DE CUENTA',
-            style: TextStyle(
-              color: _textPrimary,
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.2,
-            ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userAsyncValue = ref.watch(meProvider);
+    return AsyncUIBuilder(
+      asyncValue: userAsyncValue,
+      builder: (data) {
+        return Container(
+          decoration: BoxDecoration(
+            color: _bgCard,
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              _Avatar(),
-              const SizedBox(width: 14),
-              const Expanded(
-                child: Text(
-                  'Usuario_Game_Spotlight',
-                  style: TextStyle(
-                    color: _textPrimary,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 12),
-              _ActionButton(
-                label: 'EDITAR PERFIL',
-                isFocused: focusedAction == 0,
-                color: _purple,
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          const Divider(color: _divider, height: 1),
-          const SizedBox(height: 20),
-          Row(
+          padding: const EdgeInsets.all(28),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    _LabelRow(label: 'Idioma de la interfaz'),
-                    SizedBox(height: 18),
-                    _LabelRow(label: 'Control Parental'),
-                    SizedBox(height: 18),
-                    _LabelRow(label: 'Gestión de Suscripción'),
-                    SizedBox(height: 18),
-                    _LabelRow(label: 'Dispositivos Vinculados'),
-                    SizedBox(height: 18),
-                    _LabelRow(label: 'Seguridad de la Cuenta'),
-                  ],
+              const Text(
+                'AJUSTES DE CUENTA',
+                style: TextStyle(
+                  color: _textPrimary,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.2,
                 ),
               ),
-              const SizedBox(width: 32),
-              SizedBox(
-                width: 200,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text(
-                      'Control Parental',
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  _Avatar(avatarUrl: data.avatarUrl),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      data.name ?? 'Usuario_Game_Spotlight',
                       style: TextStyle(
-                        color: _textSecondary,
-                        fontSize: 12,
+                        color: _textPrimary,
+                        fontSize: 17,
                         fontWeight: FontWeight.w600,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Desactivado — restringe el acceso a juegos con clasificación parental.',
-                      style: TextStyle(color: _textSecondary, fontSize: 11),
+                  ),
+                  const SizedBox(width: 12),
+                  _ActionButton(
+                    label: 'EDITAR PERFIL',
+                    isFocused: focusedAction == 0,
+                    color: _purple,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Divider(color: _divider, height: 1),
+              const SizedBox(height: 20),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        _LabelRow(label: 'Idioma de la interfaz'),
+                        SizedBox(height: 18),
+                        _LabelRow(label: 'Control Parental'),
+                        SizedBox(height: 18),
+                        _LabelRow(label: 'Gestión de Suscripción'),
+                        SizedBox(height: 18),
+                        _LabelRow(label: 'Dispositivos Vinculados'),
+                        SizedBox(height: 18),
+                        _LabelRow(label: 'Seguridad de la Cuenta'),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Dispositivos Vinculados',
-                      style: TextStyle(
-                        color: _textSecondary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  const SizedBox(width: 32),
+                  SizedBox(
+                    width: 200,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Control Parental',
+                          style: TextStyle(
+                            color: _textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Desactivado — restringe el acceso a juegos con clasificación parental.',
+                          style: TextStyle(color: _textSecondary, fontSize: 11),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Dispositivos Vinculados',
+                          style: TextStyle(
+                            color: _textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _ActionButton(
+                          label: 'Ver Todos',
+                          isFocused: focusedAction == 1,
+                          color: _purpleDim,
+                        ),
+                        const SizedBox(height: 8),
+                        _ActionButton(
+                          label: 'Cambiar Contraseña',
+                          isFocused: focusedAction == 2,
+                          color: _purpleDim,
+                        ),
+                        const SizedBox(height: 8),
+                        _ActionButton(
+                          label: 'Cerrar Sesión',
+                          isFocused: focusedAction == 3,
+                          color: _red,
+                          onTap: onLogout,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    _ActionButton(
-                      label: 'Ver Todos',
-                      isFocused: focusedAction == 1,
-                      color: _purpleDim,
-                    ),
-                    const SizedBox(height: 8),
-                    _ActionButton(
-                      label: 'Cambiar Contraseña',
-                      isFocused: focusedAction == 2,
-                      color: _purpleDim,
-                    ),
-                    const SizedBox(height: 8),
-                    _ActionButton(
-                      label: 'Cerrar Sesión',
-                      isFocused: focusedAction == 3,
-                      color: _red,
-                      onTap: onLogout,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -409,17 +412,27 @@ class _AccountPanel extends StatelessWidget {
 // ─── Auxiliares ───────────────────────────────────────────────────────────────
 
 class _Avatar extends StatelessWidget {
+  const _Avatar({required this.avatarUrl});
+
+  final String? avatarUrl;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 52,
       height: 52,
       decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(avatarUrl ?? ''),
+          fit: BoxFit.cover,
+        ),
         shape: BoxShape.circle,
         border: Border.all(color: _purple, width: 2),
         color: _purpleDim,
       ),
-      child: const Icon(Icons.person, color: _textPrimary, size: 26),
+      child: avatarUrl == null
+          ? const Icon(Icons.person, color: _textPrimary, size: 26)
+          : null,
     );
   }
 }

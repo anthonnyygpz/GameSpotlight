@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:game_tv/core/domain/auth/usecases/auth/register_usecase.dart';
-import 'package:game_tv/core/providers/auth/auth_provider.dart';
-import 'package:game_tv/core/utils/validators.dart';
-import 'package:game_tv/core/widgets/tv_button.dart';
-import 'package:game_tv/core/widgets/tv_text_field.dart';
+import 'package:gamespotlight/core/domain/auth/usecases/auth/register_usecase.dart';
+import 'package:gamespotlight/core/providers/auth/auth_provider.dart';
+import 'package:gamespotlight/core/utils/validators.dart';
+import 'package:gamespotlight/core/widgets/tv_button.dart';
+import 'package:gamespotlight/core/widgets/tv_text_field.dart';
 
 class RegisterForm extends StatelessWidget {
   const RegisterForm({super.key, required this.onSwitch});
