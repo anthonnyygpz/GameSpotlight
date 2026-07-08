@@ -1,4 +1,4 @@
-import 'package:game_tv/core/domain/platforms/entities/platforms_entity.dart';
+import 'package:gamespotlight/core/domain/platforms/entities/platforms_entity.dart';
 
 final List<PlatformsEntity> mockPlatformsList = [
   PlatformsEntity(

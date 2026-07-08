@@ -1,4 +1,4 @@
-import 'package:game_tv/core/domain/trailers/entities/trailer_entity.dart';
+import 'package:gamespotlight/core/domain/trailers/entities/trailer_entity.dart';
 
 final List<TrailerEntity> mockTrailers = [
   // Grand Theft Auto VI (idJuego: 1) — Rockstar Games | Nov 2026

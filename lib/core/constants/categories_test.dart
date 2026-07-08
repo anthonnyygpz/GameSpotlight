@@ -1,4 +1,4 @@
-import 'package:game_tv/core/domain/categories/entity/category_entity.dart';
+import 'package:gamespotlight/core/domain/categories/entity/category_entity.dart';
 
 List<CategoryEntity> mockCategories = [
   CategoryEntity(categoryId: '1', name: 'Próximo Lanzamiento'),

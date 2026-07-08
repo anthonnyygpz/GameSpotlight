@@ -1,4 +1,4 @@
-import 'package:game_tv/core/domain/trailer_categories/entity/trailer_categories_entity.dart';
+import 'package:gamespotlight/core/domain/trailer_categories/entity/trailer_categories_entity.dart';
 
 final List<TrailerCategoryEntity> mockTrailerCategories = [
   // ---------------------------------------------------------

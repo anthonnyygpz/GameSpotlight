@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:game_tv/core/constants/app_constants.dart';
-import 'package:game_tv/core/constants/menu_items.dart';
-import 'package:game_tv/core/providers/navigation/navigation_state.dart';
+import 'package:gamespotlight/core/constants/app_constants.dart';
+import 'package:gamespotlight/core/constants/menu_items.dart';
+import 'package:gamespotlight/core/providers/navigation/navigation_state.dart';
 
 class NavigationNotifier extends Notifier<NavigationState> {
   ScrollController? _activeMainScroll;
@@ -133,13 +133,11 @@ class NavigationNotifier extends Notifier<NavigationState> {
   }
 
   void _scrollRowToCol(int targetRow, int targetCol) {
-    // Ignorar solo si explícitamente confirmamos que la fila 0 es un HeroBanner
     if (_hasHero && targetRow == 0) return;
 
-    final index = _hasHero ? targetRow - 1 : targetRow;
-    if (index < 0 || index >= _activeRowScrolls.length) return;
+    if (targetRow < 0 || targetRow >= _activeRowScrolls.length) return;
+    final controller = _activeRowScrolls[targetRow];
 
-    final controller = _activeRowScrolls[index];
     if (!controller.hasClients) return;
 
     final targetOffset = (targetCol * _cardWidth - 20.0).clamp(

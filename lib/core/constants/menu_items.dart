@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:game_tv/core/constants/app_routes.dart';
-import 'package:game_tv/core/models/nav_item.dart';
+import 'package:gamespotlight/core/constants/app_routes.dart';
+import 'package:gamespotlight/core/models/nav_item.dart';
 
 const globalNavItems = [
   NavItem(icon: Icons.home_rounded, label: 'INICIO', route: AppRoutes.home),
@@ -14,9 +14,17 @@ const globalNavItems = [
     label: 'TRAILERS\nEXCLUSIVOS',
     route: AppRoutes.exclusiveTrailers,
   ),
-  NavItem(icon: Icons.sports_esports_rounded, label: 'GÉNEROS', route: ''),
+  NavItem(
+    icon: Icons.sports_esports_rounded,
+    label: 'GÉNEROS',
+    route: AppRoutes.genres,
+  ),
   NavItem(icon: Icons.tv_rounded, label: 'PLATAFORMAS', route: ''),
-  NavItem(icon: Icons.favorite_rounded, label: 'FAVORITOS', route: ''),
+  NavItem(
+    icon: Icons.favorite_rounded,
+    label: 'FAVORITOS',
+    route: AppRoutes.favorites,
+  ),
   NavItem(
     icon: Icons.settings_rounded,
     label: 'AJUSTES',
