@@ -1,5 +1,5 @@
-import 'package:game_tv/core/data/games/models/game_model.dart';
-import 'package:game_tv/core/domain/games/entities/game_response_entity.dart';
+import 'package:gamespotlight/core/data/games/models/game_model.dart';
+import 'package:gamespotlight/core/domain/games/entities/game_response_entity.dart';
 
 class GameResponseModel extends GameResponseEntity {
   const GameResponseModel({required super.success, required super.data});
@@ -19,6 +19,7 @@ class DataGameModel extends DataGame {
     required super.upcoming,
     required super.topRated,
     required super.newReleases,
+    required super.exclusives,
   });
 
   factory DataGameModel.fromJson(Map<String, dynamic> json) {
@@ -45,6 +46,11 @@ class DataGameModel extends DataGame {
           [],
       newReleases:
           (json['new_releases'] as List<dynamic>?)
+              ?.map((e) => GameModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      exclusives:
+          (json['exclusives'] as List<dynamic>?)
               ?.map((e) => GameModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],

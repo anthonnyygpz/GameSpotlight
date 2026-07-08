@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:game_tv/core/constants/categories_test.dart';
+import 'package:gamespotlight/core/constants/categories_test.dart';
 
 class CategoriesRemoteDataSource {
   final Dio client;

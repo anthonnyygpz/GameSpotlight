@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:game_tv/core/constants/trailer_categories_test.dart';
+import 'package:gamespotlight/core/constants/trailer_categories_test.dart';
 
 class TrailerCategoriesRemoteDataSource {
   final Dio client;

@@ -1,4 +1,4 @@
-import 'package:game_tv/core/domain/categories/entity/category_entity.dart';
+import 'package:gamespotlight/core/domain/categories/entity/category_entity.dart';
 
 class CategoryModel extends CategoryEntity {
   const CategoryModel({required super.categoryId, required super.name});

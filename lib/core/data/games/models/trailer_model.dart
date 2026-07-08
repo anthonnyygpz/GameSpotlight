@@ -1,4 +1,4 @@
-import 'package:game_tv/core/domain/games/entities/trailer_entity.dart';
+import 'package:gamespotlight/core/domain/games/entities/trailer_entity.dart';
 
 class TrailerModel extends TrailerEntity {
   const TrailerModel({
@@ -13,13 +13,13 @@ class TrailerModel extends TrailerEntity {
 
   factory TrailerModel.fromJson(Map<String, dynamic> json) {
     return TrailerModel(
-      trailerId: json['trailerId'] as String,
-      title: json['title'] as String,
-      type: json['type'] as String,
-      videoUrl: json['videoUrl'] as String,
-      posterUrl: json['posterUrl'] as String?,
-      sortOrder: json['sortOrder'] as int,
-      categories: json['categories'] as String,
+      trailerId: json['id_trailer'] as String? ?? '',
+      title: json['titulo'] as String? ?? '',
+      type: json['tipo'] as String? ?? '',
+      videoUrl: json['url_video'] as String? ?? '',
+      posterUrl: json['url_poster'] as String? ?? '',
+      sortOrder: json['orden'] as String? ?? '',
+      categories: json['category_ids'] as List<dynamic>? ?? [],
     );
   }
 }

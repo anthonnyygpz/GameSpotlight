@@ -1,4 +1,4 @@
-import 'package:game_tv/core/domain/auth/usecases/auth/register_usecase.dart';
+import 'package:gamespotlight/core/domain/auth/usecases/auth/register_usecase.dart';
 
 class RegisterRequestModel extends RegisterParams {
   const RegisterRequestModel({

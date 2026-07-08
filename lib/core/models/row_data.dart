@@ -1,4 +1,4 @@
-import 'package:game_tv/core/domain/games/entities/game_entity.dart';
+import 'package:gamespotlight/core/domain/games/entities/game_entity.dart';
 
 class RowData {
   final String title;

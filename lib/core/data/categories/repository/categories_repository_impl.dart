@@ -1,7 +1,7 @@
-import 'package:game_tv/core/data/categories/datasource/categories_remote_datasource.dart';
-import 'package:game_tv/core/data/categories/model/category_model.dart';
-import 'package:game_tv/core/domain/categories/entity/category_entity.dart';
-import 'package:game_tv/core/domain/categories/repository/categories_repository.dart';
+import 'package:gamespotlight/core/data/categories/datasource/categories_remote_datasource.dart';
+import 'package:gamespotlight/core/data/categories/model/category_model.dart';
+import 'package:gamespotlight/core/domain/categories/entity/category_entity.dart';
+import 'package:gamespotlight/core/domain/categories/repository/categories_repository.dart';
 
 class CategoriesRepositoryImpl implements CategoriesRepository {
   final CategoriesRemoteDataSource remoteDataSource;

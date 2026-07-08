@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:game_tv/core/errors/exceptions.dart';
+import 'package:gamespotlight/core/errors/exceptions.dart';
 
 class DioExceptionMapper {
   const DioExceptionMapper._(); // evita instanciarla, es solo un namespace de funciones
