@@ -18,15 +18,27 @@ La estructura principal del código se encuentra en el directorio `/lib`:
 ```text
 lib/
  ├── core/              # Código transversal y compartido por toda la app
- │   ├── constants/     # Constantes globales (colores, temas, strings, assets)
+ │   ├── constants/     # Constantes globales (rutas, menú, colores, assets)
+ │   ├── data/          # Datasources, modelos y repositorios (capa de datos)
+ │   │   └── platforms/ # Modelos y repositorio de plataformas
+ │   ├── domain/        # Entidades y contratos de repositorio (capa de dominio)
+ │   │   └── platforms/ # Entidades PlatformEntity y GamePlatformEntity
+ │   ├── errors/        # Excepciones personalizadas
+ │   ├── models/        # Modelos genéricos (ej. ApiResponse)
+ │   ├── providers/     # Providers globales de Riverpod (navigation, platforms, etc.)
  │   ├── routes/        # Configuración de enrutamiento con go_router
- │   └── widgets/       # Componentes visuales reutilizables (botones genéricos, loaders, etc.)
+ │   └── widgets/       # Componentes visuales reutilizables
  │
  ├── features/          # Funcionalidades específicas y aisladas de la app
  │   ├── auth/          # Lógica, estado y pantallas de autenticación
- │   └── home/          # Lógica, estado y pantallas principales (Dashboard/Home)
+ │   ├── game_details/  # Detalle de un juego individual
+ │   ├── genres/        # Listado y detalle de géneros
+ │   ├── home/          # Pantalla principal (Dashboard/Home)
+ │   ├── platforms/     # Listado de plataformas y juegos por plataforma
+ │   ├── settings/      # Configuración y perfil de usuario
+ │   └── upcoming_releases/ # Próximos lanzamientos
  │
- ├── app.dart           # Configuración base del framework (MaterialApp/CupertinoApp, Themes)
+ ├── app.dart           # Configuración base del framework (MaterialApp, Themes)
  └── main.dart          # Punto de entrada de la aplicación (runApp y ProviderScope)
 ```
 
@@ -34,7 +46,7 @@ lib/
 Si necesitas realizar un cambio o resolver un bug, hazte la siguiente pregunta: **¿Esto pertenece a una funcionalidad específica o es algo global?**
 1. **Componentes Globales:** Si quieres modificar un botón que se usa en toda la app o agregar un nuevo color a la paleta, debes ir a `lib/core/`.
 2. **Modificaciones Específicas:** Si hay un error en el inicio de sesión, debes buscar exclusivamente dentro de `lib/features/auth/`.
-3. **Nuevas Pantallas:** Si creas una pantalla nueva, debes registrar su ruta en `lib/core/routes/`.
+3. **Nuevas Pantallas:** Si creas una pantalla nueva, debes registrar su ruta en `lib/core/routes/` y agregar la entrada al menú en `lib/core/constants/menu_items.dart`.
 
 ---
 
@@ -44,24 +56,55 @@ Para configurar y levantar este proyecto en tu entorno local, sigue estos pasos:
 
 ### 1. Pre-requisitos
 Asegúrate de cumplir con los siguientes requisitos en tu máquina:
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) configurado (requiere versión Dart SDK `^3.12.1`).
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) instalado y en el `PATH` (requiere **Dart SDK `^3.12.1`**).
 - IDE recomendado: **VS Code** o **Android Studio** con las extensiones de Flutter y Dart.
-- Un dispositivo físico conectado (recomendado TV o dispositivo con pad direccional) o un emulador de Android/iOS en ejecución.
+- Un dispositivo físico conectado (recomendado TV o dispositivo con pad direccional) o un emulador de Android en ejecución.
+- Acceso a internet para que `pub.dev` pueda descargar las dependencias.
 
-### 2. Preparar el entorno
-Si acabas de clonar el repositorio, navega a la raíz del proyecto y descarga todas las dependencias definidas en el archivo `pubspec.yaml`:
+### 2. Clonar el repositorio
 ```bash
-# Navegar al proyecto
-cd Game-Spotlight 
+git clone https://github.com/<tu-usuario>/Game-Spotlight.git
+cd Game-Spotlight
+```
 
-# Obtener dependencias de pub.dev
+### 3. Instalar dependencias
+Descarga todos los paquetes definidos en `pubspec.yaml`:
+```bash
 flutter pub get
 ```
 
-### 3. Ejecutar la aplicación
+> **Dependencias principales del proyecto:**
+> | Paquete | Versión | Uso |
+> |---|---|---|
+> | `flutter_riverpod` | ^3.3.1 | Gestión de estado |
+> | `go_router` | ^17.3.0 | Enrutamiento declarativo |
+> | `dio` | ^5.9.2 | Cliente HTTP para la API |
+> | `cached_network_image` | ^3.4.1 | Carga y caché de imágenes |
+> | `dpad` | ^3.0.0 | Navegación con D-Pad (TV) |
+> | `google_fonts` | ^8.1.0 | Tipografía |
+> | `video_player` | ^2.11.1 | Reproducción de video |
+> | `shared_preferences` | ^2.5.5 | Persistencia local |
+
+### 4. Verificar el entorno
+Comprueba que Flutter no reporta problemas antes de ejecutar:
+```bash
+flutter doctor
+```
+
+### 5. Ejecutar la aplicación
 Compila y despliega la aplicación en el dispositivo activo:
 ```bash
+# Listar dispositivos disponibles
+flutter devices
+
+# Ejecutar en un dispositivo específico (opcional: -d <device-id>)
 flutter run
+```
+
+### 6. (Opcional) Generar código localizable
+Si modificas archivos `.arb` o usas `flutter_localizations`, regenera los archivos de localización:
+```bash
+flutter gen-l10n
 ```
 
 ---
@@ -108,7 +151,7 @@ Mantén un historial de git limpio y legible utilizando el estándar **Conventio
 
 **Ejemplo:**
 ```bash
-git commit -m "feat: agregar nuevo botón de cerrar sesión"
+git commit -m "feat(platforms): add PlatformsScreen and GamePlatformScreen"
 ```
 
 ### 3. Flujo de Pull Requests (PR)
